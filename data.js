@@ -20,7 +20,7 @@ const PROFILE = {
   linkedin: "https://www.linkedin.com/in/ryley-davenport-547a8682/",
   github: "https://github.com/ryleydavenport",
   about:
-    "Dynamic leader with a proven track record driving 56% sales growth and building departments from the ground up. I lead the Solutions Engineering team at Thinkific, helping Thinkific Plus customers solve complex technical challenges. Before that, I spent five and a half years at Gravity (IGM Technology) growing from Support Specialist to Director of Customer Success — building the Customer Success, Customer Support, and Solution Engineering functions from scratch along the way.",
+    "Dynamic leader with a proven track record driving 100% sales growth and building departments from the ground up. I lead the Solutions Engineering team at Thinkific, helping Thinkific Plus customers solve complex technical challenges. Before that, I spent five and a half years at Gravity (IGM Technology) growing from Support Specialist to Director of Customer Success — building the Customer Success, Customer Support, and Solution Engineering functions from scratch along the way.",
 };
 
 // ------------------------------------------------------------

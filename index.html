@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ryley Davenport — Solutions Engineering Leader</title>
+  <meta name="description" content="Ryley Davenport — Manager, Solution Engineering at Thinkific. Projects, accomplishments, and experience." />
+  <style>
+    :root {
+      --bg: #07090f;
+      --bg-2: #0b0e17;
+      --surface: rgba(255, 255, 255, 0.035);
+      --surface-solid: #10141f;
+      --border: rgba(255, 255, 255, 0.09);
+      --border-bright: rgba(255, 255, 255, 0.22);
+      --text: #eef2f9;
+      --muted: #93a0b5;
+      --c1: #5b8cff;   /* electric blue */
+      --c2: #9d5bff;   /* violet */
+      --c3: #34e0c2;   /* teal */
+      --c4: #ff5b9d;   /* pink */
+      --radius: 18px;
+      --maxw: 1060px;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      line-height: 1.65;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--c1); text-decoration: none; }
+    ::selection { background: rgba(91, 140, 255, 0.35); }
+
+    /* ---------- canvas + ambient layers ---------- */
+    #blob-canvas, #particle-canvas {
+      position: fixed; inset: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 0;
+    }
+    #blob-canvas { filter: blur(70px) saturate(1.2); opacity: 0.55; }
+    #particle-canvas { z-index: 1; opacity: 0.7; }
+    .noise {
+      position: fixed; inset: 0; z-index: 2; pointer-events: none; opacity: 0.05;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+    }
+    #cursor-glow {
+      position: fixed; width: 520px; height: 520px; border-radius: 50%;
+      pointer-events: none; z-index: 3; transform: translate(-50%, -50%);
+      background: radial-gradient(circle, rgba(91,140,255,0.10) 0%, rgba(157,91,255,0.05) 35%, transparent 70%);
+      transition: opacity 0.4s; opacity: 0;
+    }
+
+    .page { position: relative; z-index: 4; }
+    .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 1.6rem; }
+
+    /* ---------- progress bar + nav ---------- */
+    #progress {
+      position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+      background: linear-gradient(90deg, var(--c1), var(--c2), var(--c3));
+      z-index: 100; box-shadow: 0 0 12px rgba(91,140,255,0.8);
+    }
+    nav {
+      position: fixed; top: 14px; left: 50%; transform: translateX(-50%);
+      z-index: 90; width: min(94%, var(--maxw));
+      background: rgba(10, 13, 21, 0.55);
+      border: 1px solid var(--border);
+      border-radius: 999px; backdrop-filter: blur(18px) saturate(1.4);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+    }
+    nav .inner {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.65rem 1.4rem; gap: 1rem;
+    }
+    nav .brand {
+      font-weight: 800; letter-spacing: -0.02em; color: var(--text); font-size: 1.02rem;
+      background: linear-gradient(90deg, var(--c1), var(--c3));
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    nav .links { display: flex; gap: 0.3rem; flex-wrap: wrap; }
+    nav .links a {
+      color: var(--muted); font-size: 0.88rem; font-weight: 600;
+      padding: 0.35rem 0.85rem; border-radius: 999px; transition: all 0.25s ease;
+    }
+    nav .links a:hover { color: var(--text); background: rgba(255,255,255,0.07); }
+    nav .links a.active { color: var(--text); background: rgba(91,140,255,0.18); box-shadow: inset 0 0 0 1px rgba(91,140,255,0.35); }
+
+    /* ---------- hero ---------- */
+    header.hero {
+      min-height: 100svh; display: flex; flex-direction: column; justify-content: center;
+      padding: 7.5rem 0 4rem; position: relative;
+    }
+    .hero .eyebrow {
+      display: inline-flex; align-items: center; gap: 0.55rem;
+      font-size: 0.82rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--c3); margin-bottom: 1.2rem;
+    }
+    .hero .eyebrow::before {
+      content: ""; width: 9px; height: 9px; border-radius: 50%;
+      background: var(--c3); box-shadow: 0 0 14px var(--c3);
+      animation: pulse 2.2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: 0.55; } }
+    .hero h1 {
+      font-size: clamp(2.8rem, 8vw, 5.4rem); line-height: 1.04; letter-spacing: -0.035em; font-weight: 800;
+    }
+    .hero h1 .grad {
+      background: linear-gradient(110deg, var(--c1) 0%, var(--c2) 45%, var(--c4) 80%);
+      background-size: 200% 200%;
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+      animation: gradShift 7s ease infinite;
+    }
+    @keyframes gradShift { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+    .hero .type-line {
+      margin-top: 1.1rem; font-size: clamp(1.15rem, 2.6vw, 1.6rem); font-weight: 600;
+      color: var(--text); min-height: 2.2em;
+    }
+    .hero .type-line .caret {
+      display: inline-block; width: 3px; height: 1.15em; vertical-align: -0.18em;
+      background: var(--c3); margin-left: 3px; animation: blink 1s steps(1) infinite;
+      box-shadow: 0 0 10px var(--c3);
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+    .hero .tagline { margin-top: 1.3rem; color: var(--muted); max-width: 60ch; font-size: 1.05rem; }
+    .hero .cta { margin-top: 2.2rem; display: flex; gap: 0.9rem; flex-wrap: wrap; }
+    .btn {
+      position: relative; display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.75rem 1.5rem; border-radius: 12px; font-size: 0.95rem; font-weight: 700;
+      border: 1px solid var(--border-bright); color: var(--text);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s;
+      overflow: hidden;
+    }
+    .btn:hover { transform: translateY(-3px); border-color: var(--c1); box-shadow: 0 10px 30px rgba(91,140,255,0.25); }
+    .btn.primary {
+      background: linear-gradient(110deg, var(--c1), var(--c2));
+      border: none; color: #fff;
+      box-shadow: 0 8px 28px rgba(110,100,255,0.4);
+    }
+    .btn.primary:hover { box-shadow: 0 14px 40px rgba(110,100,255,0.55); }
+    .btn.primary::after {
+      content: ""; position: absolute; top: 0; left: -80%; width: 50%; height: 100%;
+      background: linear-gradient(100deg, transparent, rgba(255,255,255,0.35), transparent);
+      transform: skewX(-20deg); animation: sheen 3.6s ease infinite;
+    }
+    @keyframes sheen { 0%, 60% { left: -80%; } 100% { left: 160%; } }
+
+    .scroll-hint {
+      position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+      color: var(--muted); font-size: 1.4rem; animation: bob 2s ease-in-out infinite;
+    }
+    @keyframes bob { 0%,100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, 10px); } }
+
+    /* ---------- stats ---------- */
+    .stats {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;
+      margin-top: 3.5rem;
+    }
+    .stat {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 1.4rem 1.5rem; backdrop-filter: blur(8px);
+      transition: transform 0.3s ease, border-color 0.3s;
+    }
+    .stat:hover { transform: translateY(-5px); border-color: var(--border-bright); }
+    .stat .num {
+      font-size: 2.3rem; font-weight: 800; letter-spacing: -0.03em;
+      background: linear-gradient(110deg, var(--c3), var(--c1));
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .stat .label { color: var(--muted); font-size: 0.88rem; margin-top: 0.2rem; }
+
+    /* ---------- sections ---------- */
+    section { padding: 5.5rem 0 2rem; position: relative; }
+    .sec-head { display: flex; align-items: baseline; gap: 1.2rem; margin-bottom: 2.4rem; }
+    .sec-head .idx { font-size: 0.95rem; font-weight: 700; color: var(--c3); font-variant-numeric: tabular-nums; }
+    .sec-head h2 { font-size: clamp(1.7rem, 4vw, 2.4rem); font-weight: 800; letter-spacing: -0.03em; }
+    .sec-head .line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--border-bright), transparent); }
+
+    /* reveal-on-scroll */
+    .reveal { opacity: 0; transform: translateY(34px); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1); }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* ---------- projects (3D tilt cards) ---------- */
+    .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.3rem; }
+    .pcard {
+      position: relative; border-radius: var(--radius); padding: 1.6rem;
+      background: var(--surface); border: 1px solid var(--border);
+      backdrop-filter: blur(10px); transform-style: preserve-3d;
+      transition: border-color 0.3s, box-shadow 0.3s; will-change: transform;
+    }
+    .pcard::before {
+      content: ""; position: absolute; inset: 0; border-radius: var(--radius);
+      background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(91,140,255,0.13), transparent 45%);
+      opacity: 0; transition: opacity 0.3s; pointer-events: none;
+    }
+    .pcard:hover::before { opacity: 1; }
+    .pcard:hover { border-color: var(--border-bright); box-shadow: 0 24px 60px rgba(0,0,0,0.5); }
+    .pcard .top { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.8rem; }
+    .pcard h3 { font-size: 1.18rem; font-weight: 700; letter-spacing: -0.015em; transform: translateZ(30px); }
+    .pcard .date { color: var(--muted); font-size: 0.82rem; white-space: nowrap; padding-top: 0.25rem; }
+    .badge {
+      display: inline-block; font-size: 0.68rem; font-weight: 800; letter-spacing: 0.08em;
+      text-transform: uppercase; padding: 0.2rem 0.65rem; border-radius: 999px; margin-top: 0.55rem;
+    }
+    .badge.shipped { background: rgba(52, 224, 194, 0.13); color: var(--c3); box-shadow: inset 0 0 0 1px rgba(52,224,194,0.35); }
+    .badge.in-progress { background: rgba(255, 183, 77, 0.12); color: #ffb74d; box-shadow: inset 0 0 0 1px rgba(255,183,77,0.35); }
+    .badge.planned { background: rgba(91, 140, 255, 0.12); color: var(--c1); box-shadow: inset 0 0 0 1px rgba(91,140,255,0.35); }
+    .pcard p { color: var(--muted); font-size: 0.93rem; margin-top: 0.8rem; }
+    .pcard .tags { display: flex; gap: 0.45rem; flex-wrap: wrap; margin-top: 1rem; }
+    .pcard .tag {
+      font-size: 0.74rem; font-weight: 600; color: var(--text);
+      background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+      padding: 0.18rem 0.6rem; border-radius: 999px;
+    }
+    .pcard .plink { display: inline-block; margin-top: 1rem; font-size: 0.88rem; font-weight: 700; }
+    .pcard .plink:hover { text-decoration: underline; }
+
+    /* ---------- accomplishments timeline ---------- */
+    .timeline { position: relative; padding-left: 2.2rem; }
+    .timeline::before {
+      content: ""; position: absolute; left: 0.55rem; top: 0.4rem; bottom: 0.4rem; width: 2px;
+      background: linear-gradient(180deg, var(--c1), var(--c2), var(--c3));
+      opacity: 0.5;
+    }
+    .titem { position: relative; padding-bottom: 2rem; }
+    .titem:last-child { padding-bottom: 0; }
+    .titem::before {
+      content: ""; position: absolute; left: -2.07rem; top: 0.5rem; width: 13px; height: 13px;
+      border-radius: 50%; background: var(--bg);
+      border: 3px solid var(--c1); box-shadow: 0 0 14px rgba(91,140,255,0.7);
+      transition: transform 0.3s ease, box-shadow 0.3s;
+    }
+    .titem:hover::before { transform: scale(1.45); box-shadow: 0 0 24px rgba(91,140,255,1); }
+    .titem .tdate { font-size: 0.78rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--c3); }
+    .titem h3 { font-size: 1.12rem; font-weight: 700; margin-top: 0.15rem; letter-spacing: -0.01em; }
+    .titem p { color: var(--muted); font-size: 0.93rem; margin-top: 0.25rem; max-width: 68ch; }
+
+    /* ---------- experience ---------- */
+    .xp-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 1.8rem 1.9rem; margin-bottom: 1.3rem; backdrop-filter: blur(10px);
+      transition: border-color 0.3s;
+    }
+    .xp-card:hover { border-color: var(--border-bright); }
+    .xp-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; }
+    .xp-head h3 {
+      font-size: 1.45rem; font-weight: 800; letter-spacing: -0.02em;
+      background: linear-gradient(110deg, var(--text), var(--c1));
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .xp-head .meta { color: var(--muted); font-size: 0.86rem; text-align: right; }
+    .xp-role { padding: 1.1rem 0 0.2rem; }
+    .xp-role + .xp-role { border-top: 1px dashed var(--border); margin-top: 1rem; }
+    .xp-role .rhead { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; align-items: baseline; }
+    .xp-role h4 { font-size: 1.05rem; font-weight: 700; }
+    .xp-role .period { color: var(--muted); font-size: 0.84rem; white-space: nowrap; }
+    .xp-role ul { margin: 0.6rem 0 0.4rem 1.15rem; color: var(--muted); font-size: 0.93rem; }
+    .xp-role li { margin-bottom: 0.35rem; }
+    .xp-role li::marker { color: var(--c1); }
+
+    /* ---------- skills marquee ---------- */
+    .marquee-wrap { overflow: hidden; padding: 0.6rem 0; -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+    .marquee { display: flex; gap: 0.8rem; width: max-content; animation: scrollx 36s linear infinite; }
+    .marquee.rev { animation: scrollx-rev 42s linear infinite; }
+    .marquee-wrap:hover .marquee { animation-play-state: paused; }
+    @keyframes scrollx { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    @keyframes scrollx-rev { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+    .skill-pill {
+      display: inline-flex; align-items: center; gap: 0.5rem; white-space: nowrap;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 999px;
+      padding: 0.55rem 1.15rem; font-size: 0.92rem; font-weight: 600; color: var(--text);
+      transition: border-color 0.25s, transform 0.25s;
+    }
+    .skill-pill:hover { border-color: var(--c3); transform: translateY(-2px); }
+    .skill-pill .dot { width: 7px; height: 7px; border-radius: 50%; background: linear-gradient(110deg, var(--c1), var(--c3)); }
+
+    /* ---------- education + contact ---------- */
+    .edu-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 1.6rem 1.8rem; backdrop-filter: blur(10px);
+    }
+    .edu-card h3 { font-size: 1.2rem; font-weight: 700; }
+    .edu-card .cred { color: var(--c1); font-weight: 600; margin-top: 0.15rem; }
+    .edu-card .meta { color: var(--muted); font-size: 0.88rem; margin-top: 0.4rem; }
+
+    .contact {
+      text-align: center; padding: 6rem 0 5rem;
+    }
+    .contact h2 {
+      font-size: clamp(2rem, 6vw, 3.4rem); font-weight: 800; letter-spacing: -0.03em;
+      background: linear-gradient(110deg, var(--c1), var(--c2), var(--c4));
+      background-size: 200% 200%;
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+      animation: gradShift 7s ease infinite;
+    }
+    .contact p { color: var(--muted); margin-top: 0.9rem; max-width: 48ch; margin-inline: auto; }
+    .contact .cta { margin-top: 2rem; display: flex; gap: 0.9rem; justify-content: center; flex-wrap: wrap; }
+
+    footer {
+      border-top: 1px solid var(--border); padding: 1.8rem 0 2.4rem;
+      color: var(--muted); font-size: 0.85rem;
+    }
+    footer .inner { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--text); }
+
+    @media (max-width: 640px) {
+      nav .links a { padding: 0.3rem 0.55rem; font-size: 0.8rem; }
+      .hero { padding-top: 6.5rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+      .reveal { opacity: 1; transform: none; }
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="blob-canvas"></canvas>
+  <canvas id="particle-canvas"></canvas>
+  <div class="noise"></div>
+  <div id="cursor-glow"></div>
+  <div id="progress"></div>
+
+  <nav>
+    <div class="inner">
+      <span class="brand" id="nav-name"></span>
+      <div class="links">
+        <a href="#projects">Projects</a>
+        <a href="#wins">Wins</a>
+        <a href="#experience">Experience</a>
+        <a href="#skills">Skills</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <header class="hero wrap" id="top">
+      <div>
+        <span class="eyebrow" id="hero-eyebrow"></span>
+        <h1>Hi, I'm <span class="grad" id="hero-name"></span></h1>
+        <div class="type-line"><span id="typed"></span><span class="caret"></span></div>
+        <p class="tagline" id="hero-tagline"></p>
+        <div class="cta">
+          <a class="btn primary" id="linkedin-btn" target="_blank" rel="noopener">Connect on LinkedIn →</a>
+          <a class="btn" href="#projects">See My Work</a>
+        </div>
+        <div class="stats" id="stats"></div>
+      </div>
+      <div class="scroll-hint">▾</div>
+    </header>
+
+    <main class="wrap">
+      <section id="projects">
+        <div class="sec-head reveal"><span class="idx">01</span><h2>Projects</h2><span class="line"></span></div>
+        <div class="projects-grid" id="projects-list"></div>
+      </section>
+
+      <section id="wins">
+        <div class="sec-head reveal"><span class="idx">02</span><h2>Accomplishments</h2><span class="line"></span></div>
+        <div class="timeline" id="accomplishments-list"></div>
+      </section>
+
+      <section id="experience">
+        <div class="sec-head reveal"><span class="idx">03</span><h2>Experience</h2><span class="line"></span></div>
+        <div id="experience-list"></div>
+      </section>
+
+      <section id="skills">
+        <div class="sec-head reveal"><span class="idx">04</span><h2>Skills</h2><span class="line"></span></div>
+        <div class="reveal">
+          <div class="marquee-wrap"><div class="marquee" id="marquee-1"></div></div>
+          <div class="marquee-wrap"><div class="marquee rev" id="marquee-2"></div></div>
+        </div>
+      </section>
+
+      <section id="education">
+        <div class="sec-head reveal"><span class="idx">05</span><h2>Education</h2><span class="line"></span></div>
+        <div id="education-list"></div>
+      </section>
+
+      <section class="contact" id="contact">
+        <div class="reveal">
+          <h2>Let's build something.</h2>
+          <p id="contact-blurb"></p>
+          <div class="cta">
+            <a class="btn primary" id="email-btn">Email Me</a>
+            <a class="btn" id="contact-linkedin" target="_blank" rel="noopener">LinkedIn</a>
+            <a class="btn" id="contact-github" target="_blank" rel="noopener">GitHub</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="wrap inner">
+        <span id="footer-name"></span>
+        <span><a href="#top">Back to top ↑</a></span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="data.js"></script>
+  <script>
+    const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    /* ================= content render ================= */
+    document.title = `${PROFILE.name} — ${PROFILE.titles[0]}`;
+    document.getElementById("nav-name").textContent = PROFILE.name.split(" ")[0];
+    document.getElementById("hero-name").textContent = PROFILE.name.split(" ")[0];
+    document.getElementById("hero-eyebrow").textContent = PROFILE.location;
+    document.getElementById("hero-tagline").textContent = PROFILE.tagline;
+    document.getElementById("linkedin-btn").href = PROFILE.linkedin;
+    document.getElementById("footer-name").textContent = `© ${new Date().getFullYear()} ${PROFILE.name}`;
+    document.getElementById("contact-blurb").textContent = PROFILE.about.split(". ").slice(0, 1).join(". ") + ".";
+    document.getElementById("email-btn").href = `mailto:${PROFILE.email}`;
+    document.getElementById("contact-linkedin").href = PROFILE.linkedin;
+    document.getElementById("contact-github").href = PROFILE.github;
+
+    // stats
+    document.getElementById("stats").innerHTML = stats.map((s, i) => `
+      <div class="stat reveal" style="transition-delay:${i * 90}ms">
+        <div class="num" data-value="${s.value}" data-prefix="${esc(s.prefix)}" data-suffix="${esc(s.suffix)}" data-decimals="${s.decimals || 0}">${esc(s.prefix)}0${esc(s.suffix)}</div>
+        <div class="label">${esc(s.label)}</div>
+      </div>`).join("");
+
+    // projects
+    const statusLabel = { "shipped": "Shipped", "in-progress": "In Progress", "planned": "Planned" };
+    document.getElementById("projects-list").innerHTML = projects.map((p, i) => `
+      <div class="pcard reveal" style="transition-delay:${(i % 3) * 100}ms">
+        <div class="top">
+          <div><h3>${esc(p.title)}</h3><span class="badge ${esc(p.status)}">${esc(statusLabel[p.status] || p.status)}</span></div>
+          <span class="date">${esc(p.date)}</span>
+        </div>
+        <p>${esc(p.description)}</p>
+        ${p.tags?.length ? `<div class="tags">${p.tags.map((t) => `<span class="tag">${esc(t)}</span>`).join("")}</div>` : ""}
+        ${p.link ? `<a class="plink" href="${esc(p.link)}" target="_blank" rel="noopener">View project →</a>` : ""}
+      </div>`).join("");
+
+    // accomplishments
+    document.getElementById("accomplishments-list").innerHTML = accomplishments.map((a) => `
+      <div class="titem reveal">
+        <div class="tdate">${esc(a.date)}</div>
+        <h3>${esc(a.title)}</h3>
+        <p>${esc(a.detail)}</p>
+      </div>`).join("");
+
+    // experience
+    document.getElementById("experience-list").innerHTML = experience.map((co) => `
+      <div class="xp-card reveal">
+        <div class="xp-head">
+          <h3>${esc(co.company)}</h3>
+          <div class="meta">${esc(co.period)}<br>${esc(co.location)}</div>
+        </div>
+        ${co.roles.map((r) => `
+          <div class="xp-role">
+            <div class="rhead"><h4>${esc(r.title)}</h4><span class="period">${esc(r.period)}</span></div>
+            ${r.bullets.length ? `<ul>${r.bullets.map((b) => `<li>${esc(b)}</li>`).join("")}</ul>` : ""}
+          </div>`).join("")}
+      </div>`).join("");
+
+    // skills marquees (duplicated for seamless loop)
+    const pill = (s) => `<span class="skill-pill"><span class="dot"></span>${esc(s)}</span>`;
+    const half = Math.ceil(skills.length / 2);
+    const rowA = skills.slice(0, half), rowB = skills.slice(half);
+    document.getElementById("marquee-1").innerHTML = [...rowA, ...rowA].map(pill).join("");
+    document.getElementById("marquee-2").innerHTML = [...rowB, ...rowB].map(pill).join("");
+
+    // education
+    document.getElementById("education-list").innerHTML = education.map((e) => `
+      <div class="edu-card reveal">
+        <h3>${esc(e.school)}</h3>
+        <div class="cred">${esc(e.credential)}</div>
+        <div class="meta">${esc(e.period)}${e.notes ? " · " + esc(e.notes) : ""}</div>
+      </div>`).join("");
+
+    /* ================= typewriter ================= */
+    (function typewriter() {
+      const el = document.getElementById("typed");
+      if (reducedMotion) { el.textContent = PROFILE.titles[0]; return; }
+      let ti = 0, ci = 0, deleting = false;
+      function tick() {
+        const word = PROFILE.titles[ti];
+        el.textContent = word.slice(0, ci);
+        let delay = deleting ? 28 : 62;
+        if (!deleting && ci === word.length) { delay = 2100; deleting = true; }
+        else if (deleting && ci === 0) { deleting = false; ti = (ti + 1) % PROFILE.titles.length; delay = 350; }
+        else ci += deleting ? -1 : 1;
+        setTimeout(tick, delay);
+      }
+      tick();
+    })();
+
+    /* ================= scroll reveal + counters ================= */
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (!en.isIntersecting) return;
+        en.target.classList.add("visible");
+        en.target.querySelectorAll?.(".num[data-value]")?.forEach(countUp);
+        if (en.target.matches?.(".num[data-value]")) countUp(en.target);
+        io.unobserve(en.target);
+      });
+    }, { threshold: 0.18 });
+    document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+
+    function countUp(el) {
+      if (el.dataset.done) return;
+      el.dataset.done = "1";
+      const target = parseFloat(el.dataset.value), dec = +el.dataset.decimals;
+      const pre = el.dataset.prefix, suf = el.dataset.suffix;
+      if (reducedMotion) { el.textContent = pre + target.toFixed(dec) + suf; return; }
+      const dur = 1600, t0 = performance.now();
+      (function frame(t) {
+        const p = Math.min((t - t0) / dur, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = pre + (target * eased).toFixed(dec) + suf;
+        if (p < 1) requestAnimationFrame(frame);
+      })(t0);
+    }
+
+    /* ================= progress bar + active nav ================= */
+    const progress = document.getElementById("progress");
+    const navLinks = [...document.querySelectorAll("nav .links a")];
+    const sections = navLinks.map((a) => document.querySelector(a.hash)).filter(Boolean);
+    addEventListener("scroll", () => {
+      const h = document.documentElement;
+      progress.style.width = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100 + "%";
+      let current = null;
+      for (const s of sections) if (s.getBoundingClientRect().top < innerHeight * 0.4) current = s;
+      navLinks.forEach((a) => a.classList.toggle("active", current && a.hash === "#" + current.id));
+    }, { passive: true });
+
+    /* ================= cursor glow + card tilt ================= */
+    const glow = document.getElementById("cursor-glow");
+    if (!reducedMotion && matchMedia("(pointer: fine)").matches) {
+      addEventListener("mousemove", (e) => {
+        glow.style.opacity = "1";
+        glow.style.left = e.clientX + "px";
+        glow.style.top = e.clientY + "px";
+      }, { passive: true });
+
+      document.querySelectorAll(".pcard").forEach((card) => {
+        card.addEventListener("mousemove", (e) => {
+          const r = card.getBoundingClientRect();
+          const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+          card.style.setProperty("--mx", x * 100 + "%");
+          card.style.setProperty("--my", y * 100 + "%");
+          card.style.transform = `perspective(900px) rotateY(${(x - 0.5) * 10}deg) rotateX(${(0.5 - y) * 8}deg) translateY(-4px)`;
+        });
+        card.addEventListener("mouseleave", () => { card.style.transform = ""; });
+      });
+    }
+
+    /* ================= liquid blobs canvas ================= */
+    (function blobs() {
+      const cv = document.getElementById("blob-canvas"), ctx = cv.getContext("2d");
+      let W, H;
+      const resize = () => { W = cv.width = innerWidth; H = cv.height = innerHeight; };
+      resize(); addEventListener("resize", resize);
+      const COLORS = ["#5b8cff", "#9d5bff", "#34e0c2", "#ff5b9d"];
+      const blobs = COLORS.map((c, i) => ({
+        c, r: 260 + i * 60,
+        x: Math.random() * innerWidth, y: Math.random() * innerHeight,
+        a: Math.random() * Math.PI * 2, sp: 0.0016 + i * 0.0007, orb: 180 + i * 90,
+        cx: innerWidth * (0.2 + 0.6 * Math.random()), cy: innerHeight * (0.2 + 0.6 * Math.random()),
+      }));
+      let mx = innerWidth / 2, my = innerHeight / 2;
+      addEventListener("mousemove", (e) => { mx = e.clientX; my = e.clientY; }, { passive: true });
+      if (reducedMotion) {
+        blobs.forEach((b) => {
+          const g = ctx.createRadialGradient(b.cx, b.cy, 0, b.cx, b.cy, b.r);
+          g.addColorStop(0, b.c + "66"); g.addColorStop(1, "transparent");
+          ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+        });
+        return;
+      }
+      (function draw() {
+        ctx.clearRect(0, 0, W, H);
+        ctx.globalCompositeOperation = "lighter";
+        blobs.forEach((b, i) => {
+          b.a += b.sp;
+          const pull = i === 0 ? 0.12 : 0.05;
+          b.cx += ((mx - b.cx) * pull) * 0.02;
+          b.cy += ((my - b.cy) * pull) * 0.02;
+          const x = b.cx + Math.cos(b.a) * b.orb, y = b.cy + Math.sin(b.a * 1.3) * b.orb * 0.7;
+          const g = ctx.createRadialGradient(x, y, 0, x, y, b.r);
+          g.addColorStop(0, b.c + "59"); g.addColorStop(1, "transparent");
+          ctx.fillStyle = g;
+          ctx.beginPath(); ctx.arc(x, y, b.r, 0, Math.PI * 2); ctx.fill();
+        });
+        requestAnimationFrame(draw);
+      })();
+    })();
+
+    /* ================= particle constellation ================= */
+    (function particles() {
+      if (reducedMotion) return;
+      const cv = document.getElementById("particle-canvas"), ctx = cv.getContext("2d");
+      let W, H;
+      const resize = () => { W = cv.width = innerWidth; H = cv.height = innerHeight; };
+      resize(); addEventListener("resize", resize);
+      const N = Math.min(90, Math.floor(innerWidth / 16));
+      const pts = Array.from({ length: N }, () => ({
+        x: Math.random() * innerWidth, y: Math.random() * innerHeight,
+        vx: (Math.random() - 0.5) * 0.35, vy: (Math.random() - 0.5) * 0.35,
+        r: 1 + Math.random() * 1.6,
+      }));
+      let mx = -9999, my = -9999;
+      addEventListener("mousemove", (e) => { mx = e.clientX; my = e.clientY; }, { passive: true });
+      addEventListener("mouseleave", () => { mx = my = -9999; });
+      (function draw() {
+        ctx.clearRect(0, 0, W, H);
+        for (const p of pts) {
+          // gentle drift + mouse repulsion
+          const dx = p.x - mx, dy = p.y - my, d2 = dx * dx + dy * dy;
+          if (d2 < 16000) { const d = Math.sqrt(d2) || 1; p.vx += (dx / d) * 0.12; p.vy += (dy / d) * 0.12; }
+          p.vx *= 0.985; p.vy *= 0.985;
+          p.x += p.vx; p.y += p.vy;
+          if (p.x < 0 || p.x > W) p.vx *= -1;
+          if (p.y < 0 || p.y > H) p.vy *= -1;
+          ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = "rgba(147, 170, 255, 0.5)"; ctx.fill();
+        }
+        for (let i = 0; i < pts.length; i++) {
+          for (let j = i + 1; j < pts.length; j++) {
+            const a = pts[i], b = pts[j];
+            const dx = a.x - b.x, dy = a.y - b.y, d2 = dx * dx + dy * dy;
+            if (d2 < 13000) {
+              ctx.strokeStyle = `rgba(120, 150, 255, ${0.16 * (1 - d2 / 13000)})`;
+              ctx.lineWidth = 1;
+              ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+            }
+          }
+        }
+        requestAnimationFrame(draw);
+      })();
+    })();
+  </script>
+</body>
+</html>

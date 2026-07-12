@@ -99,7 +99,7 @@ const accomplishments = [
     date: "Jun 2026",
     title: "Promoted to Manager, Solution Engineering at Thinkific",
     detail:
-      "Stepped into leading the Solutions Engineering team after nine months of building momentum as Team Lead.",
+      "Stepped into leading the Solutions Engineering team after seven months of building momentum as Team Lead.",
   },
   {
     date: "2025",

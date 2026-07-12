@@ -115,9 +115,9 @@ const accomplishments = [
   },
   {
     date: "2023",
-    title: "56% record sales growth",
+    title: "100% record sales growth",
     detail:
-      "Led solution engineering efforts delivering 40% revenue growth in year one and 56% in year two — IGM's highest sales figures to date.",
+      "Led solution engineering efforts delivering 40% revenue growth in year one and 100% in year two — IGM's highest sales figures to date.",
   },
   {
     date: "2021",
@@ -179,7 +179,7 @@ const experience = [
         title: "Director of Solution Engineers",
         period: "Nov 2021 – Jul 2024",
         bullets: [
-          "Led solution engineering to 40% revenue growth in year one and 56% in year two — IGM's highest sales figures to date.",
+          "Led solution engineering to 40% revenue growth in year one and 100% in year two — IGM's highest sales figures to date.",
           "Averaged $2.3M in annual sales through customized, technically sophisticated enterprise demos.",
           "Partnered with Account Executives on solution strategy and ran training on technical selling, objection handling, and market positioning.",
           "Landed major enterprise wins, including the Texas Department of Transportation.",

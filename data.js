@@ -27,7 +27,7 @@ const PROFILE = {
 // STATS — the animated counters in the hero.
 // value: the number counted up to; prefix/suffix wrap it.
 const stats = [
-  { value: 56, prefix: "", suffix: "%", label: "Sales growth driven in one year" },
+  { value: 100, prefix: "", suffix: "%", label: "Sales growth driven in one year" },
   { value: 2.3, prefix: "$", suffix: "M+", decimals: 1, label: "Average annual sales closed" },
   { value: 200, prefix: "", suffix: "+", label: "Enterprise & public sector clients" },
   { value: 400, prefix: "", suffix: "+", label: "Technical docs authored" },

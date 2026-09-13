@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Draft War Room</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<style>
+:root{
+  --bg:#f2efe7; --surface:#fbfaf5; --surface2:#eae6d9; --ink:#20242e; --ink2:#5c6070;
+  --line:#d8d3c2; --accent:#9a7b2d; --accent-ink:#7a5f1c;
+  --blue:#2e6da8; --blue-soft:#e3edf6; --red:#b04a37; --red-soft:#f5e6e2;
+  --good:#3d7a4a; --good-soft:#e4efe6; --warn:#a05c1f; --threat:#a63a2a;
+  --chip:#efece1; --chip-line:#cfc9b6;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10141d; --surface:#171d29; --surface2:#1f2634; --ink:#e6e2d4; --ink2:#9aa0ad;
+    --line:#2b3242; --accent:#d3ab52; --accent-ink:#d3ab52;
+    --blue:#5b9bd9; --blue-soft:#1a2634; --red:#d97a63; --red-soft:#2c1e1b;
+    --good:#6fbf80; --good-soft:#1c2a20; --warn:#d9a05c; --threat:#e0705c;
+    --chip:#202839; --chip-line:#333c4f;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10141d; --surface:#171d29; --surface2:#1f2634; --ink:#e6e2d4; --ink2:#9aa0ad;
+  --line:#2b3242; --accent:#d3ab52; --accent-ink:#d3ab52;
+  --blue:#5b9bd9; --blue-soft:#1a2634; --red:#d97a63; --red-soft:#2c1e1b;
+  --good:#6fbf80; --good-soft:#1c2a20; --warn:#d9a05c; --threat:#e0705c;
+  --chip:#202839; --chip-line:#333c4f;
+}
+*{box-sizing:border-box}
+body{background:var(--bg); color:var(--ink); font:15px/1.55 "IBM Plex Sans",system-ui,sans-serif; margin:0; padding:0 0 64px;}
+header{position:sticky; top:0; z-index:50; background:var(--bg); border-bottom:1px solid var(--line); padding:14px 20px 0;}
+.masthead{display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; max-width:1240px; margin:0 auto;}
+h1{font:400 26px/1.1 Marcellus,Georgia,serif; margin:0; letter-spacing:.02em;}
+.sub{color:var(--ink2); font-size:13px;}
+.syncpill{margin-left:auto; font-size:11.5px; font-weight:700; letter-spacing:.04em; border-radius:99px; padding:3px 11px; border:1px solid var(--line); color:var(--ink2);}
+.syncpill.on{border-color:var(--good); color:var(--good);}
+nav{display:flex; gap:2px; max-width:1240px; margin:10px auto 0; flex-wrap:wrap;}
+nav button{appearance:none; border:1px solid var(--line); border-bottom:none; background:var(--surface2); color:var(--ink2);
+  font:600 13px/1 "IBM Plex Sans",sans-serif; letter-spacing:.05em; text-transform:uppercase; padding:10px 18px;
+  border-radius:8px 8px 0 0; cursor:pointer;}
+nav button[aria-selected="true"]{background:var(--surface); color:var(--ink);}
+nav button:focus-visible{outline:2px solid var(--accent); outline-offset:-2px;}
+main{max-width:1240px; margin:0 auto; padding:22px 20px;}
+section[hidden]{display:none!important}
+h2{font:400 20px/1.2 Marcellus,Georgia,serif; margin:26px 0 10px; text-wrap:balance;}
+h2:first-child{margin-top:0}
+h3{font:600 13px/1.2 "IBM Plex Sans",sans-serif; text-transform:uppercase; letter-spacing:.07em; color:var(--ink2); margin:18px 0 8px;}
+p{max-width:72ch}
+.teamgrid{display:grid; grid-template-columns:1fr 1fr; gap:22px;}
+@media(max-width:940px){.teamgrid{grid-template-columns:1fr}}
+.teamcol>.teamhead{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; padding-bottom:6px; border-bottom:2px solid var(--line); margin-bottom:12px;}
+.teamhead .tname{font:400 18px Marcellus,serif;}
+.teamhead.us .tname{color:var(--blue)} .teamhead.them .tname{color:var(--red)}
+.pcard{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:14px 16px; margin-bottom:12px;}
+.pcard .prow{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;}
+.pname{font-weight:700; font-size:15px;}
+.rank{font-size:12px; color:var(--ink2);}
+.role{font-size:11px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--accent-ink); border:1px solid var(--accent); border-radius:99px; padding:1px 8px;}
+.champs{display:flex; flex-wrap:wrap; gap:6px; margin-top:9px;}
+.cchip{display:inline-flex; align-items:baseline; gap:5px; background:var(--chip); border:1px solid var(--chip-line); border-radius:6px; padding:3px 8px; font-size:12.5px;}
+.cchip .pts{color:var(--ink2); font-size:11px; font-variant-numeric:tabular-nums;}
+.cchip.hot{border-color:var(--accent);}
+.cchip.live{border-color:var(--good); background:var(--good-soft);}
+.cchip .rec{color:var(--good); font-size:10.5px; font-weight:600;}
+.practicing{margin-top:9px; font-size:12.5px;}
+.practicing .plabel{font-size:10.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--good); display:block; margin-bottom:4px;}
+.note{font-size:13px; color:var(--ink2); margin-top:9px; max-width:72ch;}
+.flag{border-left:3px solid var(--threat); background:var(--red-soft); border-radius:0 8px 8px 0; padding:10px 14px; font-size:13.5px; margin:10px 0;}
+.hint{border-left:3px solid var(--accent); background:var(--surface2); border-radius:0 8px 8px 0; padding:10px 14px; font-size:13.5px; margin:0 0 16px; max-width:none;}
+.tag{display:inline-block; font-size:10.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; border-radius:4px; padding:1px 6px; vertical-align:1px;}
+.tag.t3{background:var(--threat); color:#fff;} .tag.t2{background:var(--warn); color:#fff;} .tag.t1{background:var(--surface2); color:var(--ink2); border:1px solid var(--line);}
+.compgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:16px;}
+.comp{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:16px; display:flex; flex-direction:column;}
+.comp h4{font:400 17px Marcellus,serif; margin:0 0 2px;}
+.comp .kicker{font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:var(--accent-ink); font-weight:700;}
+.lineup{margin:10px 0; display:grid; gap:4px; font-size:13.5px;}
+.lineup div{display:flex; gap:8px;}
+.lineup .lr{width:38px; flex:none; font-weight:700; font-size:11px; letter-spacing:.05em; color:var(--ink2); text-transform:uppercase; padding-top:2px;}
+.lineup .lc{font-weight:600;}
+.lineup .lp{color:var(--ink2); font-weight:400;}
+.comp .why{font-size:13px; color:var(--ink2);}
+.comp .beats{font-size:12.5px; margin-top:8px;}
+.comp .beats b{color:var(--good);} .comp .beats .w{color:var(--warn); font-weight:700;}
+.procheck{margin-top:10px; padding-top:8px; border-top:1px dashed var(--line); font-size:12px; color:var(--ink2);}
+.procheck b{color:var(--accent-ink);}
+.voterow{margin-top:10px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+.votebtn{appearance:none; border:1px solid var(--accent); background:none; color:var(--accent-ink); border-radius:99px; padding:3px 12px; font:600 12px "IBM Plex Sans",sans-serif; cursor:pointer;}
+.votebtn:hover{background:var(--accent); color:#fff;}
+.votebtn:focus-visible{outline:2px solid var(--accent); outline-offset:1px;}
+.votecount{font-size:12px; color:var(--ink2);}
+.banlist{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin:8px 0 4px;}
+.bancard{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:14px 16px;}
+.bancard h3{margin-top:0;}
+ol.tight{margin:6px 0 0; padding-left:20px; font-size:14px;} ol.tight li{margin:4px 0;}
+ul.tight{margin:6px 0 0; padding-left:20px; font-size:14px;} ul.tight li{margin:4px 0;}
+table.pro{border-collapse:collapse; font-size:13px; min-width:520px;}
+table.pro th{font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink2); text-align:left; padding:6px 14px 6px 0; border-bottom:2px solid var(--line);}
+table.pro td{padding:5px 14px 5px 0; border-bottom:1px solid var(--line); font-variant-numeric:tabular-nums;}
+table.pro td.n{font-weight:600;}
+.tablewrap{overflow-x:auto;}
+.wr-hi{color:var(--good); font-weight:700;} .wr-lo{color:var(--threat);}
+.toolbar{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:14px;}
+.seg{display:inline-flex; border:1px solid var(--line); border-radius:8px; overflow:hidden;}
+.seg button{appearance:none; border:none; background:var(--surface); color:var(--ink2); font:600 13px "IBM Plex Sans",sans-serif; padding:7px 14px; cursor:pointer;}
+.seg button.on{background:var(--accent); color:#fff;}
+.seg button:focus-visible{outline:2px solid var(--accent); outline-offset:-2px;}
+.btn{appearance:none; border:1px solid var(--line); background:var(--surface); color:var(--ink); border-radius:8px; padding:7px 14px; font:600 13px "IBM Plex Sans",sans-serif; cursor:pointer;}
+.btn:hover{border-color:var(--accent);}
+.btn:focus-visible{outline:2px solid var(--accent); outline-offset:1px;}
+.btn.primary{background:var(--accent); border-color:var(--accent); color:#fff;}
+.phase{margin:6px 0 14px;}
+.phaselabel{font-size:11px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--ink2); margin:0 0 5px;}
+.slots{display:flex; gap:6px; flex-wrap:wrap;}
+.slot{min-width:96px; border:1.5px dashed var(--line); border-radius:8px; padding:5px 9px; font-size:12.5px; background:var(--surface); cursor:pointer;}
+.slot .who{display:block; font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--ink2);}
+.slot.B .who{color:var(--blue);} .slot.R .who{color:var(--red);}
+.slot.filled{border-style:solid;}
+.slot.filled.ban .val{text-decoration:line-through; color:var(--ink2);}
+.slot.B.filled{background:var(--blue-soft); border-color:var(--blue);}
+.slot.R.filled{background:var(--red-soft); border-color:var(--red);}
+.slot.current{border-color:var(--accent); border-style:solid; box-shadow:0 0 0 2px var(--accent);}
+.slot .val{font-weight:600; min-height:1.2em; display:block;}
+.slot:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+.draftgrid{display:grid; grid-template-columns:1.15fr .85fr; gap:18px; align-items:start;}
+@media(max-width:940px){.draftgrid{grid-template-columns:1fr}}
+.panel{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:14px 16px;}
+.panel h3{margin-top:0;}
+input[type=search],input[type=text],select,textarea{padding:9px 12px; font:14px "IBM Plex Sans",sans-serif; border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--ink);}
+input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent); outline-offset:0;}
+#search{width:100%;}
+.filterrow{display:flex; gap:6px; flex-wrap:wrap; margin:9px 0;}
+.fchip{appearance:none; border:1px solid var(--chip-line); background:var(--chip); color:var(--ink2); border-radius:99px; padding:3px 11px; font:600 12px "IBM Plex Sans",sans-serif; cursor:pointer;}
+.fchip.on{background:var(--accent); border-color:var(--accent); color:#fff;}
+.fchip:focus-visible{outline:2px solid var(--accent); outline-offset:1px;}
+.champlist{display:flex; flex-wrap:wrap; gap:6px; max-height:340px; overflow-y:auto; padding:2px;}
+.pick{appearance:none; border:1px solid var(--chip-line); background:var(--chip); color:var(--ink); border-radius:6px; padding:4px 9px; font:13px "IBM Plex Sans",sans-serif; cursor:pointer; display:inline-flex; gap:6px; align-items:baseline;}
+.pick:hover{border-color:var(--accent);}
+.pick:focus-visible{outline:2px solid var(--accent); outline-offset:1px;}
+.pick:disabled{opacity:.35; cursor:not-allowed; text-decoration:line-through;}
+.pick .meta{font-size:10.5px; color:var(--ink2);}
+.pick .ctr{font-size:10.5px; color:var(--good); font-weight:700;}
+.pick .thr{font-size:10.5px; color:var(--threat); font-weight:700;}
+.stepbanner{border-left:4px solid var(--accent); background:var(--surface2); border-radius:0 8px 8px 0; padding:9px 14px; font-size:14px; margin-bottom:12px;}
+.suggest .pick{margin:3px 4px 3px 0;}
+.alerts{display:grid; gap:8px; margin-top:10px;}
+.alert{border-left:3px solid var(--threat); background:var(--red-soft); padding:8px 12px; border-radius:0 6px 6px 0; font-size:13px;}
+.alert b{display:block;}
+.okline{font-size:13px; color:var(--good); font-weight:600;}
+.threatrow{display:flex; justify-content:space-between; gap:8px; font-size:13px; padding:4px 0; border-bottom:1px dashed var(--line);}
+.threatrow:last-child{border-bottom:none;}
+.threatrow .st{font-size:11.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase;}
+.st.open{color:var(--threat);} .st.gone{color:var(--good);} .st.picked{color:var(--warn);}
+.compquick{font-size:13px; margin:6px 0;}
+.compquick .cq{margin:5px 0;}
+.cq .dead{text-decoration:line-through; color:var(--ink2);}
+.cq .have{color:var(--good); font-weight:700;}
+.hubgrid{display:grid; grid-template-columns:1fr 1fr; gap:18px; align-items:start;}
+@media(max-width:940px){.hubgrid{grid-template-columns:1fr}}
+.formrow{display:flex; gap:8px; flex-wrap:wrap; margin:8px 0;}
+.formrow>*{flex:1 1 120px;}
+.formrow>.grow{flex:2 1 180px;}
+.entry{display:flex; align-items:baseline; gap:8px; padding:6px 0; border-bottom:1px dashed var(--line); font-size:13.5px; flex-wrap:wrap;}
+.entry:last-child{border-bottom:none;}
+.entry .ec{font-weight:600;}
+.entry .em{color:var(--ink2); font-size:12px;}
+.entry .comfort{font-size:10.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; border-radius:4px; padding:1px 6px;}
+.comfort.locked{background:var(--good); color:#fff;} .comfort.practicing{background:var(--warn); color:#fff;} .comfort.rusty{background:var(--surface2); color:var(--ink2); border:1px solid var(--line);}
+.entry .del{margin-left:auto; appearance:none; border:none; background:none; color:var(--threat); cursor:pointer; font-size:12px; font-weight:600;}
+.notecard{padding:8px 0; border-bottom:1px dashed var(--line); font-size:13.5px;}
+.notecard .who{font-size:11.5px; color:var(--ink2); font-weight:600;}
+.playerhead{font:400 15px Marcellus,serif; color:var(--accent-ink); margin:12px 0 2px;}
+footer{max-width:1240px; margin:26px auto 0; padding:0 20px; color:var(--ink2); font-size:12px;}
+@media (prefers-reduced-motion: no-preference){ .slot.current{animation:pulse 1.6s ease-in-out infinite;} @keyframes pulse{50%{box-shadow:0 0 0 5px color-mix(in srgb, var(--accent) 40%, transparent);}} }
+</style>
+
+<header>
+  <div class="masthead">
+    <h1>Draft War Room</h1>
+    <span class="sub">5v5 league · tournament draft · scouted Sept 12, 2026</span>
+    <span class="syncpill" id="syncpill">Connecting…</span>
+  </div>
+  <nav role="tablist">
+    <button role="tab" aria-selected="true" data-tab="scout">Scouting</button>
+    <button role="tab" aria-selected="false" data-tab="plan">Game Plan</button>
+    <button role="tab" aria-selected="false" data-tab="hub">Team Hub</button>
+    <button role="tab" aria-selected="false" data-tab="draft">Live Draft</button>
+  </nav>
+</header>
+<main>
+
+<!-- ============ SCOUTING ============ -->
+<section id="tab-scout">
+  <div class="hint"><b>Share this page's URL with the team</b> — everyone can add what they're practicing (Team Hub tab), vote on comps, and run the draft board. On this hosted copy the sync pill shows "Local only": entries and votes stay on each person's own browser. Green chips on the cards below are live self-reports; grey chips are lifetime mastery from Mastery Chart.</div>
+  <div class="teamgrid">
+    <div class="teamcol">
+      <div class="teamhead us"><span class="tname">Our Team</span><span class="sub">default: Austin top · Capn jg · Hamwow mid · Hamshow adc · Jim sup — flex when it wins draft</span></div>
+
+      <div class="pcard" data-player="Hamwow"><div class="prow"><span class="pname">Hamwow</span><span class="rank">Emerald II solo / Emerald III flex — highest rank, most active</span><span class="role">Mid / Jungle flex</span></div>
+        <div class="champs">
+          <span class="cchip hot">Nidalee <span class="pts">953K</span> <span class="rec">SS · 5h ago</span></span>
+          <span class="cchip hot">Xerath <span class="pts">415K</span> <span class="rec">SS · 20h</span></span>
+          <span class="cchip">Zed <span class="pts">352K</span></span>
+          <span class="cchip hot">Illaoi <span class="pts">305K</span> <span class="rec">SS · 10h</span></span>
+          <span class="cchip">Lee Sin <span class="pts">210K</span> <span class="rec">S · 1d</span></span>
+          <span class="cchip">Caitlyn <span class="pts">171K</span></span>
+          <span class="cchip">Draven <span class="pts">145K</span></span>
+          <span class="cchip">Kha'Zix <span class="pts">111K</span> <span class="rec">10h</span></span>
+          <span class="cchip">Fizz <span class="pts">69K</span> <span class="rec">S · 1d</span></span>
+          <span class="cchip">Amumu <span class="pts">62K</span> <span class="rec">S · 9h</span></span>
+          <span class="cchip">Cassiopeia <span class="pts">55K</span> <span class="rec">3d</span></span>
+        </div>
+        <div class="practicing" hidden><span class="plabel">Practicing now (self-reported)</span><span class="pr-list"></span></div>
+        <p class="note">Your carry player. Nidalee is a genuine weapon (top-400 NA mastery) — expect it to be ban #1 against you. Xerath gives poke comps; Illaoi is a pocket top flex. Cassiopeia is worth practice time: 65% pro priority, 59% pro win rate this split.</p>
+      </div>
+
+      <div class="pcard" data-player="Capn"><div class="prow"><span class="pname">CapnSmoothBrain</span><span class="rank">Emerald IV solo / Plat IV flex · 9.2M pts, 171 champs</span><span class="role">Jungle / Mid-ADC flex</span></div>
+        <div class="champs">
+          <span class="cchip hot">Briar <span class="pts">696K</span></span>
+          <span class="cchip">Kayn <span class="pts">350K</span></span>
+          <span class="cchip">Viego <span class="pts">249K</span></span>
+          <span class="cchip">Sett <span class="pts">234K</span></span>
+          <span class="cchip">Jhin <span class="pts">231K</span></span>
+          <span class="cchip">Lillia <span class="pts">226K</span></span>
+          <span class="cchip">Senna <span class="pts">222K</span></span>
+          <span class="cchip">Kindred <span class="pts">202K</span></span>
+          <span class="cchip hot">Vex <span class="pts">197K</span></span>
+          <span class="cchip">Sejuani <span class="pts">167K</span></span>
+          <span class="cchip">Hecarim <span class="pts">166K</span></span>
+          <span class="cchip">Nocturne <span class="pts">119K</span></span>
+        </div>
+        <div class="practicing" hidden><span class="plabel">Practicing now (self-reported)</span><span class="pr-list"></span></div>
+        <p class="note">Deep jungle pool across carry (Briar/Kayn/Viego) and tank (Sejuani) styles. Vex hard-counters Mehlo's dash assassins if Capn flexes mid. Nocturne deserves practice: it's the #1 priority jungler in pro right now (67% presence). Note: masterychart shows no recent-play data for this profile — log current champs in the Team Hub.</p>
+      </div>
+
+      <div class="pcard" data-player="Hamshow"><div class="prow"><span class="pname">Hamshow</span><span class="rank">Emerald IV solo / Emerald III flex · 5.3M pts</span><span class="role">ADC / Sup-Top flex</span></div>
+        <div class="champs">
+          <span class="cchip hot">Thresh <span class="pts">402K</span></span>
+          <span class="cchip hot">Shen <span class="pts">379K</span></span>
+          <span class="cchip">Master Yi <span class="pts">318K</span></span>
+          <span class="cchip">Brand <span class="pts">263K</span></span>
+          <span class="cchip">Senna <span class="pts">229K</span></span>
+          <span class="cchip">Maokai <span class="pts">212K</span></span>
+          <span class="cchip">Leona <span class="pts">124K</span></span>
+          <span class="cchip">Caitlyn <span class="pts">122K</span></span>
+          <span class="cchip">Jhin <span class="pts">113K</span></span>
+          <span class="cchip">Ashe <span class="pts">111K</span></span>
+          <span class="cchip">Ezreal <span class="pts">111K</span></span>
+          <span class="cchip">Braum <span class="pts">109K</span></span>
+        </div>
+        <div class="practicing" hidden><span class="plabel">Practicing now (self-reported)</span><span class="pr-list"></span></div>
+        <p class="note">Most flexible player on the roster: real ADC pool plus signature Thresh/Shen. The 318K Master Yi is a steal threat if the enemy leaves Yi open. Ashe is quietly elite in pro right now: 58% win rate.</p>
+      </div>
+
+      <div class="pcard" data-player="Austin"><div class="prow"><span class="pname">AustinS</span><span class="rank">Gold I solo / Plat IV flex · 8.3M pts</span><span class="role">Top / Sup flex</span></div>
+        <div class="champs">
+          <span class="cchip hot">Swain <span class="pts">888K</span></span>
+          <span class="cchip">Nautilus <span class="pts">401K</span></span>
+          <span class="cchip">Volibear <span class="pts">359K</span></span>
+          <span class="cchip">Cho'Gath <span class="pts">339K</span></span>
+          <span class="cchip">Ornn <span class="pts">299K</span></span>
+          <span class="cchip">Amumu <span class="pts">289K</span></span>
+          <span class="cchip">Garen <span class="pts">288K</span></span>
+          <span class="cchip">Seraphine <span class="pts">268K</span></span>
+          <span class="cchip">Miss Fortune <span class="pts">250K</span></span>
+          <span class="cchip">Shen <span class="pts">208K</span></span>
+          <span class="cchip">Mordekaiser <span class="pts">186K</span></span>
+        </div>
+        <div class="practicing" hidden><span class="plabel">Practicing now (self-reported)</span><span class="pr-list"></span></div>
+        <p class="note">The frontline. Swain is the signature (888K); the tank stable (Ornn, Cho, Voli, Naut) is exactly what beats a Master Yi comp. Nautilus carries 38% pro priority — a respected pick, not a niche one.</p>
+      </div>
+
+      <div class="pcard" data-player="Jim"><div class="prow"><span class="pname">JimtheBarbarian</span><span class="rank">Unranked solo / Silver III flex · 1.6M pts</span><span class="role">Support / Jungle-tank flex</span></div>
+        <div class="champs">
+          <span class="cchip hot">Alistar <span class="pts">102K</span></span>
+          <span class="cchip">Leona <span class="pts">68K</span></span>
+          <span class="cchip">Braum <span class="pts">65K</span></span>
+          <span class="cchip">Sejuani <span class="pts">54K</span></span>
+          <span class="cchip">Vi <span class="pts">49K</span></span>
+          <span class="cchip">Dr. Mundo <span class="pts">45K</span></span>
+          <span class="cchip">Xin Zhao <span class="pts">45K</span></span>
+          <span class="cchip">Nami <span class="pts">44K</span></span>
+          <span class="cchip">Thresh <span class="pts">40K</span></span>
+        </div>
+        <div class="practicing" hidden><span class="plabel">Practicing now (self-reported)</span><span class="pr-list"></span></div>
+        <p class="note">Pure engage-tank support. Alistar/Leona/Braum are the right tools against this enemy team — every one of them is a Master Yi answer. Keep Jim on simple frontline CC.</p>
+      </div>
+    </div>
+
+    <div class="teamcol">
+      <div class="teamhead them"><span class="tname">Enemy Team</span><span class="sub">their game plan is visible from here: Yi + Zilean, assassin mid</span></div>
+
+      <div class="pcard"><div class="prow"><span class="pname">Anthonyza</span> <span class="tag t3">Threat 1</span><span class="rank">Diamond II solo / Emerald I flex · 7.1M pts</span><span class="role">Jungle</span></div>
+        <div class="champs">
+          <span class="cchip hot">Master Yi <span class="pts">2.83M</span></span>
+          <span class="cchip hot">Jarvan IV <span class="pts">2.19M</span></span>
+          <span class="cchip">Kha'Zix <span class="pts">282K</span></span>
+          <span class="cchip">Sejuani <span class="pts">198K</span></span>
+          <span class="cchip">Caitlyn <span class="pts">165K</span></span>
+          <span class="cchip">Jinx <span class="pts">157K</span></span>
+          <span class="cchip">Kog'Maw <span class="pts">130K</span></span>
+        </div>
+        <p class="note">Highest rank in the lobby and a two-champ jungler: 2.8M Master Yi, 2.2M Jarvan. After those the pool falls off a cliff. Note: Jarvan is a legitimate pro-meta pick (48% priority) — banning only Yi still leaves him on a strong champ. Masterychart shows no recency data for this account.</p>
+      </div>
+
+      <div class="pcard"><div class="prow"><span class="pname">Mehlo</span> <span class="tag t3">Threat 2</span><span class="rank">Emerald III solo / Plat IV flex · 7.4M pts</span><span class="role">Mid (assassins)</span></div>
+        <div class="champs">
+          <span class="cchip hot">Irelia <span class="pts">561K</span> <span class="rec">SS · 1h</span></span>
+          <span class="cchip hot">Qiyana <span class="pts">540K</span> <span class="rec">SS · 1h</span></span>
+          <span class="cchip">Katarina <span class="pts">236K</span> <span class="rec">SS · 20h</span></span>
+          <span class="cchip">Talon <span class="pts">214K</span></span>
+          <span class="cchip">Akali <span class="pts">206K</span></span>
+          <span class="cchip">Fiddlesticks <span class="pts">204K</span> <span class="rec">S</span></span>
+          <span class="cchip">Kayle <span class="pts">142K</span> <span class="rec">SS · 21h</span></span>
+          <span class="cchip">Viktor <span class="pts">132K</span> <span class="rec">SS · 2h</span></span>
+          <span class="cchip">Syndra <span class="pts">96K</span> <span class="rec">S · 1d</span></span>
+        </div>
+        <p class="note">Grinding right now — Irelia and Qiyana both played within the hour of scouting. Everything they love dashes. In pro, Qiyana runs a 58% win rate and Akali 40% presence — respect the pool, and answer it with Vex, point-click CC, and frontline.</p>
+      </div>
+
+      <div class="pcard"><div class="prow"><span class="pname">Paeter</span> <span class="tag t2">Threat 3</span><span class="rank">Emerald IV solo / Plat I flex · 7.2M pts</span><span class="role">Support / Bot</span></div>
+        <div class="champs">
+          <span class="cchip hot">Zilean <span class="pts">1.04M</span> <span class="rec">SS · 4h</span></span>
+          <span class="cchip hot">Twisted Fate <span class="pts">997K</span> <span class="rec">SS · 5d</span></span>
+          <span class="cchip">Nami <span class="pts">600K</span> <span class="rec">S · 1d</span></span>
+          <span class="cchip">Ezreal <span class="pts">507K</span> <span class="rec">S · 3d</span></span>
+          <span class="cchip">Caitlyn <span class="pts">380K</span></span>
+          <span class="cchip">Ashe <span class="pts">277K</span></span>
+          <span class="cchip">Hwei <span class="pts">223K</span></span>
+          <span class="cchip">Soraka <span class="pts">129K</span> <span class="rec">S</span></span>
+        </div>
+        <p class="note">A million points of Zilean, freshly played. Zilean + Master Yi is their obvious comp core: speed + revive on the hypercarry. Treat Zilean as a first-phase ban candidate, not a support afterthought.</p>
+      </div>
+
+      <div class="pcard"><div class="prow"><span class="pname">XskullzDomX</span> <span class="tag t1">Threat 4</span><span class="rank">Plat II solo / Silver I flex · 2.2M pts</span><span class="role">Top / Mid</span></div>
+        <div class="champs">
+          <span class="cchip">Sylas <span class="pts">167K</span> <span class="rec">A · 1w</span></span>
+          <span class="cchip">Tahm Kench <span class="pts">85K</span> <span class="rec">S · 1d</span></span>
+          <span class="cchip">Akshan <span class="pts">73K</span> <span class="rec">3d</span></span>
+          <span class="cchip">Hwei <span class="pts">69K</span> <span class="rec">S · 3d</span></span>
+          <span class="cchip">Ezreal <span class="pts">64K</span></span>
+          <span class="cchip">Swain <span class="pts">50K</span></span>
+          <span class="cchip">Vel'Koz <span class="pts">33K</span> <span class="rec">3d</span></span>
+          <span class="cchip">Gragas <span class="pts">23K</span> <span class="rec">A</span></span>
+        </div>
+        <p class="note">Shallow pool, lowest flex rank on their side. Sylas is the only scary pick — deny him good ults (Xerath and Caitlyn give him nothing). This is the lane to camp.</p>
+      </div>
+
+      <div class="pcard"><div class="prow"><span class="pname">4thTimesthecharm</span> <span class="tag t2">Unknown</span><span class="rank">Unranked · fresh account, 112K total pts</span><span class="role">? — likely bot/fill</span></div>
+        <div class="champs">
+          <span class="cchip">Yasuo <span class="pts">32K</span></span>
+          <span class="cchip">Viktor <span class="pts">11K</span></span>
+          <span class="cchip">Pantheon <span class="pts">7K</span></span>
+          <span class="cchip">Brand <span class="pts">4K</span></span>
+        </div>
+        <div class="flag"><b>Smurf alert.</b> 66 mastery score on the whole account — brand-new or alternate account, so the data tells you nothing about the player behind it. Watch their game 1 picks and lane, log what you see in Team Hub notes, and re-plan between games. Yasuo is the most-played; fear/knockup comps cover that base anyway.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GAME PLAN ============ -->
+<section id="tab-plan" hidden>
+  <h2>What their comp wants to do</h2>
+  <p>Everything on their profiles points one direction: <b>Anthonyza's Master Yi (2.8M pts) with Paeter's Zilean (1M pts)</b> — speed, stun-shrugging ult timing, and a revive on a Diamond hypercarry — while <b>Mehlo's dash assassin</b> (Irelia/Qiyana/Kat) takes over mid. Their win condition is 20+ minute teamfights where Yi cleans up. Their weaknesses: the jungler owns exactly two champs, the top laner is shallow, and the whole plan folds to layered hard CC. Worth saying out loud: <b>Master Yi and Zilean have essentially zero pro presence</b> — this is a solo-queue comp, and it loses to the coordinated, CC-layered drafts pro teams run, which is exactly what your pools can build.</p>
+
+  <h2>Ban strategy (tournament draft)</h2>
+  <div class="banlist">
+    <div class="bancard"><h3>Phase 1 — break the Yi engine</h3>
+      <ol class="tight">
+        <li><b>Master Yi</b> — 2.8M pts on a Diamond II. Non-negotiable in game 1.</li>
+        <li><b>Zilean</b> — the enabler. Banning both Yi and Zilean deletes their comp's identity.</li>
+        <li><b>Irelia</b> or <b>Qiyana</b> — whichever your mid respects more; or skip this ban and pick Vex + tanks into Mehlo instead.</li>
+      </ol>
+    </div>
+    <div class="bancard"><h3>Phase 2 — react to their picks</h3>
+      <ol class="tight">
+        <li><b>Jarvan IV</b> (2.2M, and 48% pro priority) — if Yi is gone and Anthonyza hasn't picked yet.</li>
+        <li><b>Katarina / Akali</b> — if Mehlo still hasn't picked and both dashes remain open.</li>
+        <li><b>Twisted Fate</b> (997K) — if Paeter looks like he's going carry instead of support.</li>
+      </ol>
+    </div>
+    <div class="bancard"><h3>What they'll ban against you</h3>
+      <ul class="tight">
+        <li><b>Nidalee</b> (Hamwow 953K, top-400 NA) — near lock.</li>
+        <li><b>Swain</b> (Austin 888K) — likely.</li>
+        <li><b>Thresh / Briar / Xerath / Sejuani</b> — the rest of the visible power. Every comp below has a backup at each slot.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>Pro meta check — patch 26.17/26.18, Season 16 Summer</h2>
+  <p>Pick/ban numbers below are from professional play this split (all leagues, via Games of Legends): <b>PrioScore</b> is how contested a champ is in pro drafts, <b>Pro WR</b> its professional win rate. Use this to judge which of our comfort picks are "real" in a coordinated 5v5 — which is what a league tournament is, not solo queue.</p>
+  <div class="tablewrap">
+  <table class="pro">
+    <thead><tr><th>Champion</th><th>Who plays it</th><th>Pro PrioScore</th><th>Pro WR</th><th>Read</th></tr></thead>
+    <tbody>
+      <tr><td class="n">Nocturne</td><td>Capn, Hamshow</td><td>67% — #1 jungler</td><td class="wr-lo">44%</td><td>The most contested jungler in pro. Also our answer to TF roams.</td></tr>
+      <tr><td class="n">Cassiopeia</td><td>Hamwow</td><td>65%</td><td class="wr-hi">59%</td><td>Highest-value mid in pro. Worth Hamwow's practice time these 3 weeks.</td></tr>
+      <tr><td class="n">Jarvan IV</td><td><i>Anthonyza (enemy)</i></td><td>48%</td><td>51%</td><td>Their fallback is pro-meta — respect it in phase-2 bans.</td></tr>
+      <tr><td class="n">Vi</td><td>Jim</td><td>48%</td><td>52%</td><td>Jim's jungle flex is a real pro pick with point-click lockdown.</td></tr>
+      <tr><td class="n">Lee Sin</td><td>Hamwow</td><td>42%</td><td>54%</td><td>Pro-meta backup if Nidalee is banned.</td></tr>
+      <tr><td class="n">Nautilus</td><td>Austin</td><td>38%</td><td>45%</td><td>Contested engage support/top flex.</td></tr>
+      <tr><td class="n">Bard</td><td>Hamshow</td><td>37%</td><td>48%</td><td>Pro-priority support in Hamshow's pool.</td></tr>
+      <tr><td class="n">Shen</td><td>Hamshow, Austin</td><td>21%</td><td>51%</td><td>Steady pro presence — the global ult comps are real.</td></tr>
+      <tr><td class="n">Leona</td><td>Jim, Hamshow, Austin</td><td>21%</td><td>50%</td><td>Pro-viable engage; three of us play her.</td></tr>
+      <tr><td class="n">Caitlyn</td><td>Hamwow, Hamshow</td><td>20%</td><td>48%</td><td>Standard pro ADC.</td></tr>
+      <tr><td class="n">Jhin</td><td>Capn, Hamshow</td><td>16%</td><td>50%</td><td>Setup ADC that pairs with our CC comps.</td></tr>
+      <tr><td class="n">Ashe</td><td>Capn, Hamshow</td><td>6%</td><td class="wr-hi">58%</td><td>Low presence, elite win rate — an underpriced pick.</td></tr>
+      <tr><td class="n">Sejuani</td><td>Capn, Jim</td><td>2%</td><td class="wr-hi">55%</td><td>Rarely contested, wins when picked. Our anti-Yi MVP flies under bans.</td></tr>
+      <tr><td class="n">Senna</td><td>Capn, Hamshow</td><td>1%</td><td class="wr-hi">60%</td><td>Tiny sample, huge WR — fine to pick, nobody bans it.</td></tr>
+      <tr><td class="n">Miss Fortune</td><td>Austin</td><td>3%</td><td class="wr-hi">55%</td><td>Pocket wombo piece, still wins in pro when it appears.</td></tr>
+      <tr><td class="n">Swain / Xerath / Vex / Briar / Illaoi / Nidalee</td><td>us</td><td>&lt;2% or absent</td><td>—</td><td>Solo-queue power picks. Not pro-meta — which also means nobody drafts around them. Comfort beats meta at our level; just know which is which.</td></tr>
+      <tr><td class="n">Master Yi / Zilean</td><td><i>enemy core</i></td><td>absent</td><td>—</td><td>Zero pro presence: their whole plan is a solo-queue stomp pattern that coordinated CC beats.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2>Recommended comps <span class="sub" style="font:400 13px 'IBM Plex Sans',sans-serif;">— vote in each card; votes are shared live with the team</span></h2>
+  <div class="compgrid">
+    <div class="comp"><span class="kicker">Comp A · default</span><h4>The Cage</h4>
+      <div class="lineup">
+        <div><span class="lr">Top</span><span class="lc">Ornn <span class="lp">· AustinS (Cho'Gath if banned)</span></span></div>
+        <div><span class="lr">Jg</span><span class="lc">Sejuani <span class="lp">· Capn</span></span></div>
+        <div><span class="lr">Mid</span><span class="lc">Xerath <span class="lp">· Hamwow</span></span></div>
+        <div><span class="lr">Bot</span><span class="lc">Ashe <span class="lp">· Hamshow</span></span></div>
+        <div><span class="lr">Sup</span><span class="lc">Leona <span class="lp">· Jim</span></span></div>
+      </div>
+      <p class="why">Front-to-back with four chain-CC sources and permanent slows. Master Yi cannot Q through a stun rotation; Ashe + Sejuani mean he's never on your backline at full speed.</p>
+      <p class="beats"><b>Beats:</b> Yi hypercarry, dive comps. <span class="w">Watch:</span> count your stuns — save at least two for Yi.</p>
+      <p class="procheck"><b>Pro analog:</b> the classic front-to-back T1/LCK shell. Ashe 58% pro WR, Sejuani 55%, Leona 21% prio. Only Xerath is off-meta (1%) — his job (pre-fight poke) is usually Orianna's in pro.</p>
+      <div class="voterow" data-comp="A"><button class="votebtn">Vote for this comp</button><span class="votecount"></span></div>
+    </div>
+
+    <div class="comp"><span class="kicker">Comp B · if Swain lives</span><h4>Swain Stack</h4>
+      <div class="lineup">
+        <div><span class="lr">Top</span><span class="lc">Swain <span class="lp">· AustinS</span></span></div>
+        <div><span class="lr">Jg</span><span class="lc">Briar <span class="lp">· Capn (Viego alt)</span></span></div>
+        <div><span class="lr">Mid</span><span class="lc">Cassiopeia <span class="lp">· Hamwow (Xerath alt)</span></span></div>
+        <div><span class="lr">Bot</span><span class="lc">Senna <span class="lp">· Hamshow</span></span></div>
+        <div><span class="lr">Sup</span><span class="lc">Alistar <span class="lp">· Jim</span></span></div>
+      </div>
+      <p class="why">Austin's 888K signature as the centerpiece. Drain-tank deathball: Swain + Cass melt anyone who walks in, Senna sustains from behind, Alistar and Briar force the fight.</p>
+      <p class="beats"><b>Beats:</b> dive/assassin comps, short-range brawls. <span class="w">Watch:</span> weak into heavy kite/poke — force fights in chokes and at objectives.</p>
+      <p class="procheck"><b>Pro analog:</b> built around Cassiopeia, pro's 65%-prio / 59%-WR mid. Senna posts 60% pro WR. Swain and Briar are the solo-queue seasoning on a pro-meta skeleton.</p>
+      <div class="voterow" data-comp="B"><button class="votebtn">Vote for this comp</button><span class="votecount"></span></div>
+    </div>
+
+    <div class="comp"><span class="kicker">Comp C · flex config</span><h4>Spear &amp; Shadow</h4>
+      <div class="lineup">
+        <div><span class="lr">Top</span><span class="lc">Volibear <span class="lp">· AustinS</span></span></div>
+        <div><span class="lr">Jg</span><span class="lc">Nidalee <span class="lp">· Hamwow (flexed)</span></span></div>
+        <div><span class="lr">Mid</span><span class="lc">Vex <span class="lp">· Capn (flexed)</span></span></div>
+        <div><span class="lr">Bot</span><span class="lc">Caitlyn <span class="lp">· Hamshow</span></span></div>
+        <div><span class="lr">Sup</span><span class="lc">Braum <span class="lp">· Jim</span></span></div>
+      </div>
+      <p class="why">If Nidalee escapes bans, flex Hamwow to jungle. Nid invades Master Yi's weak early game and starves him. Vex punishes every dash from Mehlo's pool. Braum's passive ruins both Yi and Yasuo.</p>
+      <p class="beats"><b>Beats:</b> assassin mids, scaling junglers. <span class="w">Watch:</span> Nid falls off — the lead must exist by 20 min. Don't show Vex before Mehlo commits.</p>
+      <p class="procheck"><b>Pro analog:</b> early-tempo jungle shells (pro runs them on Lee Sin, 42% prio 54% WR — Hamwow's direct backup here). Nidalee and Vex are comfort-over-meta: fine, that's the point of this comp.</p>
+      <div class="voterow" data-comp="C"><button class="votebtn">Vote for this comp</button><span class="votecount"></span></div>
+    </div>
+
+    <div class="comp"><span class="kicker">Comp D · pocket wombo</span><h4>Bullet Time Lockdown</h4>
+      <div class="lineup">
+        <div><span class="lr">Top</span><span class="lc">Shen <span class="lp">· Hamshow (flexed)</span></span></div>
+        <div><span class="lr">Jg</span><span class="lc">Sejuani <span class="lp">· Capn</span></span></div>
+        <div><span class="lr">Mid</span><span class="lc">Xerath <span class="lp">· Hamwow</span></span></div>
+        <div><span class="lr">Bot</span><span class="lc">Miss Fortune <span class="lp">· AustinS (flexed)</span></span></div>
+        <div><span class="lr">Sup</span><span class="lc">Leona <span class="lp">· Jim</span></span></div>
+      </div>
+      <p class="why">Sejuani ult → Leona chain → MF ult on a stunned team, with Shen ulting in from a side lane. Zilean can't revive everyone at once.</p>
+      <p class="beats"><b>Beats:</b> grouped enchanter comps, Zilean protect. <span class="w">Watch:</span> MF is immobile — CC must land first; Shen R covers her against assassins.</p>
+      <p class="procheck"><b>Pro analog:</b> the MF–Sejuani–Leona chain-wombo is a recurring clash/pro-am special; Shen (21% pro prio) makes it a real split-threat comp, the way pro teams pair a global top with grouped 4-man mid.</p>
+      <div class="voterow" data-comp="D"><button class="votebtn">Vote for this comp</button><span class="votecount"></span></div>
+    </div>
+
+    <div class="comp"><span class="kicker">Comp E · straight from pro play</span><h4>The Pro Stack</h4>
+      <div class="lineup">
+        <div><span class="lr">Top</span><span class="lc">Shen <span class="lp">· AustinS (208K)</span></span></div>
+        <div><span class="lr">Jg</span><span class="lc">Nocturne <span class="lp">· Capn (Hamshow alt)</span></span></div>
+        <div><span class="lr">Mid</span><span class="lc">Cassiopeia <span class="lp">· Hamwow</span></span></div>
+        <div><span class="lr">Bot</span><span class="lc">Ashe <span class="lp">· Hamshow</span></span></div>
+        <div><span class="lr">Sup</span><span class="lc">Leona <span class="lp">· Jim</span></span></div>
+      </div>
+      <p class="why">Every champion here is drafted in pro play this split. Nocturne R + Shen R is the pro dive engine: cross-map pressure they cannot track. Ashe arrow starts fights; Cass holds the zone. This is the comp to practice if you want to play "real" 5v5.</p>
+      <p class="beats"><b>Beats:</b> TF roams (Noc R answers his ult), split-pushers, immobile mids. <span class="w">Watch:</span> Nocturne's pro WR is 44% — the ult windows must be called, not improvised. Practice it together at least twice.</p>
+      <p class="procheck"><b>Pro numbers:</b> Nocturne 67% prio · Cass 65% prio, 59% WR · Shen 21% · Leona 21% · Ashe 58% WR. The only comp of ours a pro analyst would recognize on sight.</p>
+      <div class="voterow" data-comp="E"><button class="votebtn">Vote for this comp</button><span class="votecount"></span></div>
+    </div>
+  </div>
+
+  <h2>Draft principles</h2>
+  <ul class="tight">
+    <li><b>Sejuani is your quiet MVP pick</b> — flexes between Capn and Jim, fits every comp, 55% pro WR, and rarely eats a ban.</li>
+    <li><b>Never show Vex early.</b> Pick it after their mid commits to a dash champion.</li>
+    <li><b>Xerath flexes mid/support</b> (Hamwow and Hamshow both play it) — an early Xerath tells them nothing.</li>
+    <li><b>Nocturne is double-covered</b> (Capn and Hamshow) and the #1 pro jungler — a safe early grab that also deletes TF's map game.</li>
+    <li><b>If Yi is somehow open late</b>, Hamshow (318K Yi) can steal it.</li>
+    <li><b>Camp XskullzDomX.</b> A dead Sylas is a useless Sylas.</li>
+    <li><b>Game 1 doubles as a scout on the smurf</b> — log what you learn in Team Hub notes.</li>
+  </ul>
+</section>
+
+<!-- ============ TEAM HUB ============ -->
+<section id="tab-hub" hidden>
+  <div class="hint" id="hubhint"><b>This tab is shared.</b> Pick your name, then log the champs you're actually playing right now — it feeds the scouting cards, the comp votes, and the draft suggestions everyone sees.</div>
+  <div class="toolbar">
+    <span class="sub">I am:</span>
+    <select id="whoami">
+      <option value="">— pick your name —</option>
+      <option>Austin</option><option>Capn</option><option>Hamwow</option><option>Hamshow</option><option>Jim</option><option>Coach/Other</option>
+    </select>
+  </div>
+  <div class="hubgrid">
+    <div class="panel">
+      <h3>What I'm playing right now</h3>
+      <div class="formrow">
+        <input type="text" id="in-champ" class="grow" placeholder="Champion (e.g. Sejuani)" list="champdata">
+        <datalist id="champdata"></datalist>
+        <select id="in-role"><option>Top</option><option>Jg</option><option selected>Mid</option><option>Bot</option><option>Sup</option></select>
+        <select id="in-comfort"><option value="locked">Locked in</option><option value="practicing" selected>Practicing</option><option value="rusty">Rusty</option></select>
+      </div>
+      <div class="formrow">
+        <input type="text" id="in-note" class="grow" placeholder="Note (optional — e.g. '12 games this week, 70% wr')">
+        <button class="btn primary" id="in-add" style="flex:0 0 auto;">Add</button>
+      </div>
+      <div id="poolstatus" class="note"></div>
+      <div id="poollist"></div>
+    </div>
+    <div class="panel">
+      <h3>Team notes</h3>
+      <div class="formrow">
+        <input type="text" id="note-text" class="grow" placeholder="Scout intel, schedule, comp thoughts…">
+        <button class="btn primary" id="note-add" style="flex:0 0 auto;">Post</button>
+      </div>
+      <div id="notelist"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LIVE DRAFT ============ -->
+<section id="tab-draft" hidden>
+  <div class="hint" id="drafthint"><b>Shared board:</b> when sync is on (pill in the header), everyone with the page open sees each ban and pick as it's entered — one person drives, the team follows.</div>
+  <div class="toolbar">
+    <span class="sub">We are:</span>
+    <span class="seg" role="group" aria-label="Our side">
+      <button id="sideB" class="on">Blue side</button><button id="sideR">Red side</button>
+    </span>
+    <button class="btn" id="undo">Undo last</button>
+    <button class="btn" id="reset">Reset draft</button>
+  </div>
+
+  <div class="stepbanner" id="banner">Draft ready — Blue's first ban.</div>
+
+  <div id="sequence"></div>
+
+  <div class="draftgrid">
+    <div class="panel">
+      <h3>Champion select</h3>
+      <input id="search" type="search" placeholder="Type a champion, Enter or click to assign to the highlighted slot…" autocomplete="off">
+      <div class="filterrow" id="filters">
+        <button class="fchip on" data-f="all">All champions</button>
+        <button class="fchip" data-f="ours">Our pools</button>
+        <button class="fchip" data-f="theirs">Their pools</button>
+      </div>
+      <div class="champlist" id="champlist"></div>
+    </div>
+    <div>
+      <div class="panel suggest" style="margin-bottom:16px;">
+        <h3 id="sugtitle">Suggestions</h3>
+        <div id="suggestions"></div>
+        <div class="alerts" id="alerts"></div>
+      </div>
+      <div class="panel" style="margin-bottom:16px;">
+        <h3>Threat board</h3>
+        <div id="threats"></div>
+      </div>
+      <div class="panel">
+        <h3>Comp availability</h3>
+        <div class="compquick" id="compquick"></div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+<footer>Sources: masterychart.com profiles for both rosters and gol.gg Season 16 Summer pro pick/ban data (pulled Sept 12, 2026). Mastery ≠ current skill — SS/S/A grades and the Team Hub self-reports weigh recent play. Between games, tell Claude what happened and re-plan.</footer>
+
+<script>
+"use strict";
+/* ---------- static data ---------- */
+const ALL_CHAMPS = ["Aatrox","Ahri","Akali","Akshan","Alistar","Ambessa","Amumu","Anivia","Annie","Aphelios","Ashe","Aurelion Sol","Aurora","Azir","Bard","Bel'Veth","Blitzcrank","Brand","Braum","Briar","Caitlyn","Camille","Cassiopeia","Cho'Gath","Corki","Darius","Diana","Dr. Mundo","Draven","Ekko","Elise","Evelynn","Ezreal","Fiddlesticks","Fiora","Fizz","Galio","Gangplank","Garen","Gnar","Gragas","Graves","Gwen","Hecarim","Heimerdinger","Hwei","Illaoi","Irelia","Ivern","Janna","Jarvan IV","Jax","Jayce","Jhin","Jinx","K'Sante","Kai'Sa","Kalista","Karma","Karthus","Kassadin","Katarina","Kayle","Kayn","Kennen","Kha'Zix","Kindred","Kled","Kog'Maw","LeBlanc","Lee Sin","Leona","Lillia","Lissandra","Locke","Lucian","Lulu","Lux","Malphite","Malzahar","Maokai","Master Yi","Mel","Milio","Miss Fortune","Mordekaiser","Morgana","Naafiri","Nami","Nasus","Nautilus","Neeko","Nidalee","Nilah","Nocturne","Nunu & Willump","Olaf","Orianna","Ornn","Pantheon","Poppy","Pyke","Qiyana","Quinn","Rakan","Rammus","Rek'Sai","Rell","Renata Glasc","Renekton","Rengar","Riven","Rumble","Ryze","Samira","Sejuani","Senna","Seraphine","Sett","Shaco","Shen","Shyvana","Singed","Sion","Sivir","Skarner","Smolder","Sona","Soraka","Swain","Sylas","Syndra","Tahm Kench","Taliyah","Talon","Taric","Teemo","Thresh","Tristana","Trundle","Tryndamere","Twisted Fate","Twitch","Udyr","Urgot","Varus","Vayne","Veigar","Vel'Koz","Vex","Vi","Viego","Viktor","Vladimir","Volibear","Warwick","Wukong","Xayah","Xerath","Xin Zhao","Yasuo","Yone","Yorick","Yunara","Yuumi","Zaahen","Zac","Zed","Zeri","Ziggs","Zilean","Zoe","Zyra"];
+
+const OURS = [
+ ["Swain","Austin",["Top","Mid"],1],["Nautilus","Austin",["Sup","Top"],1],["Volibear","Austin",["Top","Jg"],1],
+ ["Cho'Gath","Austin",["Top"],1],["Ornn","Austin",["Top"],1],["Amumu","Austin",["Jg","Sup"],2],
+ ["Garen","Austin",["Top"],2],["Seraphine","Austin",["Sup","Mid"],2],["Miss Fortune","Austin",["Bot"],2],
+ ["Shen","Austin",["Top"],2],["Mordekaiser","Austin",["Top"],2],["Trundle","Austin",["Top","Jg"],2],
+ ["Leona","Austin",["Sup"],2],["Galio","Austin",["Mid","Sup"],3],["Malphite","Austin",["Top","Sup"],3],
+ ["Briar","Capn",["Jg"],1],["Kayn","Capn",["Jg"],1],["Viego","Capn",["Jg"],1],
+ ["Sejuani","Capn",["Jg"],1],["Vex","Capn",["Mid"],1],["Jhin","Capn",["Bot"],1],
+ ["Sett","Capn",["Top","Sup"],2],["Lillia","Capn",["Jg"],2],["Senna","Capn",["Sup","Bot"],2],
+ ["Kindred","Capn",["Jg"],2],["Ashe","Capn",["Bot"],2],["Yone","Capn",["Mid","Top"],2],
+ ["Hecarim","Capn",["Jg"],2],["Diana","Capn",["Jg","Mid"],2],["Nocturne","Capn",["Jg"],2],
+ ["Pyke","Capn",["Sup"],3],["Akali","Capn",["Mid"],3],["Veigar","Capn",["Mid"],3],
+ ["Nidalee","Hamwow",["Jg"],1],["Xerath","Hamwow",["Mid","Sup"],1],["Illaoi","Hamwow",["Top"],1],
+ ["Lee Sin","Hamwow",["Jg"],1],["Zed","Hamwow",["Mid"],2],["Caitlyn","Hamwow",["Bot"],2],
+ ["Draven","Hamwow",["Bot"],2],["Kha'Zix","Hamwow",["Jg"],2],["Fizz","Hamwow",["Mid"],2],
+ ["Amumu","Hamwow",["Jg"],2],["Nunu & Willump","Hamwow",["Jg"],2],["Cassiopeia","Hamwow",["Mid"],2],
+ ["Anivia","Hamwow",["Mid"],3],["Jayce","Hamwow",["Top","Mid"],3],
+ ["Thresh","Hamshow",["Sup"],1],["Shen","Hamshow",["Top"],1],["Master Yi","Hamshow",["Jg"],1],
+ ["Brand","Hamshow",["Sup","Mid"],1],["Senna","Hamshow",["Sup","Bot"],1],["Maokai","Hamshow",["Sup","Top","Jg"],1],
+ ["Leona","Hamshow",["Sup"],2],["Caitlyn","Hamshow",["Bot"],2],["Jhin","Hamshow",["Bot"],2],
+ ["Ashe","Hamshow",["Bot"],2],["Ezreal","Hamshow",["Bot"],2],["Braum","Hamshow",["Sup"],2],
+ ["Xerath","Hamshow",["Mid","Sup"],2],["Lulu","Hamshow",["Sup"],2],["Bard","Hamshow",["Sup"],2],
+ ["Nocturne","Hamshow",["Jg"],2],["Tristana","Hamshow",["Bot"],3],["Sivir","Hamshow",["Bot"],3],
+ ["Alistar","Jim",["Sup"],1],["Leona","Jim",["Sup"],1],["Braum","Jim",["Sup"],1],
+ ["Sejuani","Jim",["Jg"],2],["Vi","Jim",["Jg"],2],["Dr. Mundo","Jim",["Top","Jg"],2],
+ ["Xin Zhao","Jim",["Jg"],2],["Nami","Jim",["Sup"],2],["Thresh","Jim",["Sup"],2],
+ ["Nunu & Willump","Jim",["Jg"],3],["Vel'Koz","Jim",["Sup","Mid"],3],["Rammus","Jim",["Jg"],3],
+ ["Amumu","Jim",["Jg","Sup"],3],["Janna","Jim",["Sup"],3],["Malphite","Jim",["Top"],3]
+];
+
+const THEIRS = [
+ ["Master Yi","Anthonyza",3,"2.83M pts on a Diamond II. Their entire comp is built around this."],
+ ["Zilean","Paeter",3,"1.04M pts, freshly played. The Yi enabler — speed + revive."],
+ ["Irelia","Mehlo",3,"561K, SS grade, very recent."],
+ ["Qiyana","Mehlo",3,"540K, SS grade, very recent. 58% WR in pro."],
+ ["Jarvan IV","Anthonyza",3,"2.19M pts — his fallback, and a 48%-prio pro pick."],
+ ["Katarina","Mehlo",2,"236K, SS grade."],
+ ["Twisted Fate","Paeter",2,"997K pts — global pressure if Paeter carries."],
+ ["Kayle","Mehlo",2,"142K but SS grade this season — scaling flank pick."],
+ ["Nami","Paeter",2,"600K — their best support if Zilean is banned."],
+ ["Akali","Mehlo",1,"206K — fourth dash assassin in the pool."],
+ ["Ezreal","Paeter",1,"507K — if Paeter plays bot instead of support."],
+ ["Sylas","XskullzDomX",1,"His only real pick (167K). Deny him good ults."],
+ ["Kha'Zix","Anthonyza",1,"282K — distant third jungle option."],
+ ["Viktor","Mehlo",1,"SS grade recently — his non-assassin fallback."],
+ ["Fiddlesticks","Mehlo",1,"204K, S grade — surprise jungle/support flex."],
+ ["Tahm Kench","XskullzDomX",1,"85K, played recently — likely his top pick."],
+ ["Hwei","XskullzDomX",1,"69K, S grade — his mid fallback."],
+ ["Yasuo","4thTimesthecharm",1,"Smurf's most-played on this account (32K)."]
+];
+
+const COUNTERS = {
+ "Master Yi":{a:["Sejuani","Leona","Alistar","Ornn","Ashe","Braum"],n:"Chain hard CC — Yi dies mid-rotation. Braum passive + Ashe slows deny his stick."},
+ "Jarvan IV":{a:["Xerath","Vex","Fizz","Senna"],n:"Poke him down pre-engage; keep an out for the ult cage."},
+ "Irelia":{a:["Vex","Sejuani","Cho'Gath","Maokai"],n:"Vex fear procs on every dash. Keep waves pushed to deny resets."},
+ "Qiyana":{a:["Vex","Braum","Leona","Cho'Gath"],n:"Her burst can't kill a frontline. Vex punishes every R engage."},
+ "Katarina":{a:["Leona","Alistar","Vex"],n:"One point-click stun ends her ult. Save it."},
+ "Akali":{a:["Vex","Leona","Cho'Gath"],n:"Point-click CC through shroud windows; control-ward the shroud."},
+ "Zilean":{a:["Leona","Alistar","Nocturne","Pyke"],n:"Engage ON Zilean first — force the revive early, then reset. Nocturne R ignores his speed game."},
+ "Twisted Fate":{a:["Nocturne","Xerath"],n:"Nocturne R answers every TF ult cross-map. Track him constantly."},
+ "Nami":{a:["Leona","Alistar"],n:"Flash-engage after she wastes bubble."},
+ "Kayle":{a:["Sett","Illaoi","Volibear"],n:"She's a minion before 11 — camp top and end early."},
+ "Sylas":{a:["Xerath","Caitlyn","Ashe"],n:"Give him nothing to steal — Xerath/Cait ults are useless in his hands."},
+ "Yasuo":{a:["Vex","Alistar","Sejuani","Braum"],n:"Fear/knockup chains; don't clump for his R."},
+ "Kha'Zix":{a:["Sejuani","Leona"],n:"Stay grouped — no isolation, no damage."},
+ "Ezreal":{a:["Leona","Alistar"],n:"All-in him early — he pokes but can't fight a hook/engage lane."},
+ "Tahm Kench":{a:["Illaoi","Trundle","Vex"],n:"Illaoi shreds him in lane; Trundle eats his stats."},
+ "Hwei":{a:["Nocturne","Fizz","Zed"],n:"Immobile artillery — dive him."},
+ "Viktor":{a:["Fizz","Zed","Nocturne"],n:"Immobile — assassinate or dive."},
+ "Fiddlesticks":{a:["Sejuani","Lee Sin"],n:"Sweep jungle brush; interrupt the crow."}
+};
+
+const BAN_ORDER = ["Master Yi","Zilean","Irelia","Qiyana","Jarvan IV","Katarina","Twisted Fate","Kayle","Nami","Akali","Sylas","Ezreal"];
+
+const COMPS = [
+ {name:"A · The Cage", picks:["Ornn","Sejuani","Xerath","Ashe","Leona"]},
+ {name:"B · Swain Stack", picks:["Swain","Briar","Cassiopeia","Senna","Alistar"]},
+ {name:"C · Spear & Shadow", picks:["Volibear","Nidalee","Vex","Caitlyn","Braum"]},
+ {name:"D · Bullet Time", picks:["Shen","Sejuani","Xerath","Miss Fortune","Leona"]},
+ {name:"E · The Pro Stack", picks:["Shen","Nocturne","Cassiopeia","Ashe","Leona"]}
+];
+
+const ORDER = [
+ {t:"ban",s:"B"},{t:"ban",s:"R"},{t:"ban",s:"B"},{t:"ban",s:"R"},{t:"ban",s:"B"},{t:"ban",s:"R"},
+ {t:"pick",s:"B"},{t:"pick",s:"R"},{t:"pick",s:"R"},{t:"pick",s:"B"},{t:"pick",s:"B"},{t:"pick",s:"R"},
+ {t:"ban",s:"R"},{t:"ban",s:"B"},{t:"ban",s:"R"},{t:"ban",s:"B"},
+ {t:"pick",s:"R"},{t:"pick",s:"B"},{t:"pick",s:"B"},{t:"pick",s:"R"}
+];
+const PHASES=[["Ban Phase 1",0,6],["Pick Phase 1",6,12],["Ban Phase 2",12,16],["Pick Phase 2",16,20]];
+
+/* ---------- local state ---------- */
+let state={ourSide:"B", steps:Array(20).fill(null), filter:"all", q:""};
+let myName="";
+let db=null, dbOK=false;
+let poolEntries=[], noteEntries=[], voteEntries=[];
+let applyingRemote=false;
+
+try{
+  const s=localStorage.getItem("draft-war-room");
+  if(s){const p=JSON.parse(s); if(p&&Array.isArray(p.steps)&&p.steps.length===20){state.ourSide=p.ourSide==="R"?"R":"B"; state.steps=p.steps.map(x=>typeof x==="string"?x:null);}}
+  myName=localStorage.getItem("dwr-name")||"";
+}catch(e){}
+
+function saveLocal(){try{localStorage.setItem("draft-war-room",JSON.stringify({ourSide:state.ourSide,steps:state.steps}));}catch(e){}}
+function saveDraft(){
+  saveLocal();
+  if(dbOK){
+    try{db.doc("draft/current").set({ourSide:state.ourSide, steps:state.steps.map(x=>x||""), by:myName||"someone", ts:Date.now()}).catch(()=>{});}catch(e){}
+  }
+}
+
+const $=id=>document.getElementById(id);
+const taken=()=>new Set(state.steps.filter(Boolean));
+const cur=()=>state.steps.findIndex(x=>x===null);
+const isOurs=i=>ORDER[i].s===state.ourSide;
+const enemyPicks=()=>state.steps.filter((c,i)=>c&&ORDER[i].t==="pick"&&!isOurs(i));
+const ourPicks=()=>state.steps.filter((c,i)=>c&&ORDER[i].t==="pick"&&isOurs(i));
+const esc=s=>String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+const slug=s=>String(s).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")||"x";
+
+/* ---------- db plumbing (defensive against snapshot shape) ---------- */
+function normDoc(d){
+  if(!d)return null;
+  try{
+    if(typeof d.data==="function"){const v=d.data(); return v?Object.assign({__id:d.id},v):null;}
+    if(d.data&&typeof d.data==="object"&&!Array.isArray(d.data)&&("id" in d))return Object.assign({__id:d.id},d.data);
+    if(typeof d==="object")return d;
+  }catch(e){}
+  return null;
+}
+function normList(s){
+  if(!s)return[];
+  if(Array.isArray(s))return s.map(normDoc).filter(Boolean);
+  if(Array.isArray(s.docs))return s.docs.map(normDoc).filter(Boolean);
+  if(typeof s.forEach==="function"){const a=[]; try{s.forEach(d=>{const n=normDoc(d); if(n)a.push(n);});}catch(e){} return a;}
+  const n=normDoc(s); return n?[n]:[];
+}
+function watchCollection(name,cb){
+  const apply=s=>{try{cb(normList(s));}catch(e){}};
+  let live=false;
+  try{const c=db.collection(name); if(typeof c.onSnapshot==="function"){c.onSnapshot(apply); live=true;}}catch(e){}
+  const poll=()=>{try{db.collection(name).get().then(apply).catch(()=>{});}catch(e){}};
+  poll();
+  if(!live)setInterval(poll,8000);
+}
+function watchDoc(path,cb){
+  const apply=s=>{try{const arr=normList(s); cb(arr.length?arr[0]:null);}catch(e){}};
+  let live=false;
+  try{const d=db.doc(path); if(typeof d.onSnapshot==="function"){d.onSnapshot(apply); live=true;}}catch(e){}
+  const poll=()=>{try{db.doc(path).get().then(apply).catch(()=>{});}catch(e){}};
+  poll();
+  if(!live)setInterval(poll,6000);
+}
+
+async function initDB(){
+  try{
+    db=await claude.use("db");
+  }catch(e){db=null;}
+  const pill=$("syncpill");
+  if(!db){
+    pill.textContent="Local only";
+    pill.title="Shared sync unavailable in this view — everything still works, just not shared.";
+    $("poolstatus").textContent="Shared sync is unavailable in this view — entries you add here won't reach the team.";
+    return;
+  }
+  dbOK=true; pill.textContent="Team sync on"; pill.classList.add("on");
+  watchDoc("draft/current",d=>{
+    if(!d||!Array.isArray(d.steps))return;
+    applyingRemote=true;
+    state.ourSide=d.ourSide==="R"?"R":"B";
+    state.steps=d.steps.slice(0,20).map(x=>x&&typeof x==="string"?x:null);
+    while(state.steps.length<20)state.steps.push(null);
+    saveLocal(); syncSideButtons(); render();
+    applyingRemote=false;
+  });
+  watchCollection("pool",list=>{poolEntries=list; renderPool(); renderPracticing();});
+  watchCollection("notes",list=>{noteEntries=list; renderNotes();});
+  watchCollection("votes",list=>{voteEntries=list; renderVotes();});
+}
+
+/* ---------- tabs ---------- */
+document.querySelectorAll("nav [role=tab]").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll("nav [role=tab]").forEach(x=>x.setAttribute("aria-selected",x===b?"true":"false"));
+  ["scout","plan","hub","draft"].forEach(t=>{$("tab-"+t).hidden=(t!==b.dataset.tab);});
+}));
+
+/* ---------- team hub ---------- */
+const who=$("whoami");
+who.value=myName&&[...who.options].some(o=>o.value===myName)?myName:"";
+who.addEventListener("change",()=>{myName=who.value; try{localStorage.setItem("dwr-name",myName);}catch(e){} renderPool(); renderVotes();});
+const dl=$("champdata"); ALL_CHAMPS.forEach(c=>{const o=document.createElement("option"); o.value=c; dl.appendChild(o);});
+
+$("in-add").addEventListener("click",()=>{
+  const champ=$("in-champ").value.trim();
+  if(!myName){alert("Pick your name first (top of this tab).");return;}
+  if(!champ){$("in-champ").focus();return;}
+  const match=ALL_CHAMPS.find(c=>c.toLowerCase()===champ.toLowerCase())||champ;
+  const entry={player:myName, champ:match, role:$("in-role").value, comfort:$("in-comfort").value, note:$("in-note").value.trim().slice(0,140), ts:Date.now()};
+  if(dbOK){try{db.doc("pool/"+slug(myName)+"__"+slug(match)).set(entry).catch(()=>{});}catch(e){}}
+  else{poolEntries=poolEntries.filter(p=>!(p.player===entry.player&&p.champ===entry.champ)); poolEntries.push(entry); renderPool(); renderPracticing();}
+  $("in-champ").value=""; $("in-note").value="";
+});
+$("note-add").addEventListener("click",()=>{
+  const t=$("note-text").value.trim();
+  if(!myName){alert("Pick your name first (top of this tab).");return;}
+  if(!t)return;
+  const entry={text:t.slice(0,500), name:myName, ts:Date.now()};
+  if(dbOK){try{db.doc("notes/n"+Date.now()+"-"+Math.floor(Math.random()*9999)).set(entry).catch(()=>{});}catch(e){}}
+  else{noteEntries.push(entry); renderNotes();}
+  $("note-text").value="";
+});
+
+const COMFORT_LABEL={locked:"Locked in",practicing:"Practicing",rusty:"Rusty"};
+function renderPool(){
+  const box=$("poollist"); box.innerHTML="";
+  const byPlayer={};
+  poolEntries.slice().sort((a,b)=>(a.player||"").localeCompare(b.player||"")||(b.ts||0)-(a.ts||0)).forEach(e=>{
+    if(!e||!e.champ)return;
+    (byPlayer[e.player||"?"]=byPlayer[e.player||"?"]||[]).push(e);
+  });
+  Object.keys(byPlayer).forEach(p=>{
+    const h=document.createElement("div"); h.className="playerhead"; h.textContent=p; box.appendChild(h);
+    byPlayer[p].forEach(e=>{
+      const d=document.createElement("div"); d.className="entry";
+      d.innerHTML='<span class="ec">'+esc(e.champ)+'</span><span class="em">'+esc(e.role||"")+'</span>'+
+        '<span class="comfort '+esc(e.comfort||"practicing")+'">'+esc(COMFORT_LABEL[e.comfort]||"Practicing")+"</span>"+
+        (e.note?'<span class="em">'+esc(e.note)+"</span>":"");
+      if(e.player===myName){
+        const del=document.createElement("button"); del.className="del"; del.textContent="remove";
+        del.addEventListener("click",()=>{
+          if(dbOK){try{db.doc("pool/"+slug(e.player)+"__"+slug(e.champ)).delete().catch(()=>{});}catch(x){}}
+          else{poolEntries=poolEntries.filter(q=>q!==e); renderPool(); renderPracticing();}
+        });
+        d.appendChild(del);
+      }
+      box.appendChild(d);
+    });
+  });
+  if(!box.children.length)box.innerHTML='<p class="note">No entries yet. Each player: add the 3–6 champs you\'d actually lock in three weeks from now.</p>';
+}
+function renderPracticing(){
+  document.querySelectorAll(".pcard[data-player]").forEach(card=>{
+    const p=card.dataset.player;
+    const mine=poolEntries.filter(e=>e&&e.player===p);
+    const wrap=card.querySelector(".practicing"), list=card.querySelector(".pr-list");
+    if(!wrap||!list)return;
+    if(!mine.length){wrap.hidden=true;return;}
+    wrap.hidden=false; list.innerHTML="";
+    mine.forEach(e=>{
+      const s=document.createElement("span"); s.className="cchip live";
+      s.innerHTML=esc(e.champ)+' <span class="pts">'+esc(e.role||"")+" · "+esc(COMFORT_LABEL[e.comfort]||"")+"</span>";
+      list.appendChild(s); list.appendChild(document.createTextNode(" "));
+    });
+  });
+}
+function renderNotes(){
+  const box=$("notelist"); box.innerHTML="";
+  noteEntries.slice().sort((a,b)=>(b.ts||0)-(a.ts||0)).slice(0,50).forEach(e=>{
+    if(!e||!e.text)return;
+    const d=document.createElement("div"); d.className="notecard";
+    const when=e.ts?new Date(e.ts).toLocaleDateString(undefined,{month:"short",day:"numeric"}):"";
+    d.innerHTML='<span class="who">'+esc(e.name||"?")+" · "+when+"</span><br>"+esc(e.text);
+    box.appendChild(d);
+  });
+  if(!box.children.length)box.innerHTML='<p class="note">No notes yet — scout reports, scrim times, and game-1 smurf intel go here.</p>';
+}
+function renderVotes(){
+  document.querySelectorAll(".voterow").forEach(row=>{
+    const comp=row.dataset.comp;
+    const votes=voteEntries.filter(v=>v&&v.comp===comp);
+    const names=votes.map(v=>v.name).filter(Boolean);
+    row.querySelector(".votecount").textContent=names.length?names.length+" — "+names.join(", "):"no votes yet";
+    const btn=row.querySelector(".votebtn");
+    const mine=myName&&names.includes(myName);
+    btn.textContent=mine?"Remove my vote":"Vote for this comp";
+  });
+}
+document.querySelectorAll(".voterow .votebtn").forEach(btn=>btn.addEventListener("click",()=>{
+  const comp=btn.closest(".voterow").dataset.comp;
+  if(!myName){alert("Pick your name in the Team Hub tab first, so the vote has a name on it.");return;}
+  const id="votes/"+comp+"__"+slug(myName);
+  const mine=voteEntries.some(v=>v&&v.comp===comp&&v.name===myName);
+  if(dbOK){
+    try{ mine?db.doc(id).delete().catch(()=>{}):db.doc(id).set({comp,name:myName,ts:Date.now()}).catch(()=>{}); }catch(e){}
+  }else{
+    if(mine)voteEntries=voteEntries.filter(v=>!(v.comp===comp&&v.name===myName));
+    else voteEntries.push({comp,name:myName,ts:Date.now()});
+    renderVotes();
+  }
+}));
+
+/* ---------- draft board ---------- */
+function render(){
+  const seq=$("sequence"); seq.innerHTML="";
+  const ci=cur();
+  PHASES.forEach(ph=>{
+    const label=ph[0],a=ph[1],b=ph[2];
+    const wrap=document.createElement("div"); wrap.className="phase";
+    const pl=document.createElement("p"); pl.className="phaselabel"; pl.textContent=label; wrap.appendChild(pl);
+    const row=document.createElement("div"); row.className="slots";
+    for(let i=a;i<b;i++){
+      const st=ORDER[i], v=state.steps[i];
+      const d=document.createElement("div");
+      d.className="slot "+st.s+(v?" filled":"")+(st.t==="ban"?" ban":"")+(i===ci?" current":"");
+      d.setAttribute("role","button"); d.tabIndex=0;
+      const mine=isOurs(i);
+      d.innerHTML='<span class="who">'+(mine?"US":"THEM")+" · "+(st.t==="ban"?"ban":"pick")+'</span><span class="val">'+esc(v||"—")+"</span>";
+      d.title=v?"Click to clear this slot":"";
+      const clear=()=>{if(state.steps[i]){state.steps[i]=null; saveDraft(); render();}};
+      d.addEventListener("click",clear);
+      d.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();clear();}});
+      row.appendChild(d);
+    }
+    wrap.appendChild(row); seq.appendChild(wrap);
+  });
+
+  const bn=$("banner");
+  if(ci===-1){bn.innerHTML="<b>Draft complete.</b> Review both boards — and save their comp to Team Hub notes for game-2 planning.";}
+  else{
+    const st=ORDER[ci], mine=isOurs(ci);
+    bn.innerHTML=(mine?"<b>YOUR "+(st.t==="ban"?"BAN":"PICK")+"</b>":"<b>Their "+(st.t==="ban"?"ban":"pick")+"</b> — enter what they chose")+
+      " · step "+(ci+1)+" of 20 ("+(st.s==="B"?"Blue":"Red")+" side)";
+  }
+  renderChamps(); renderSuggestions(); renderThreats(); renderComps();
+}
+
+function selfReported(c){return poolEntries.some(e=>e&&e.champ===c);}
+function poolMatch(f,c){
+  if(f==="ours")return OURS.some(o=>o[0]===c)||selfReported(c);
+  if(f==="theirs")return THEIRS.some(t=>t[0]===c);
+  return true;
+}
+function renderChamps(){
+  const list=$("champlist"); list.innerHTML="";
+  const tk=taken(), q=state.q.toLowerCase(), ci=cur();
+  ALL_CHAMPS.filter(c=>c.toLowerCase().includes(q)&&poolMatch(state.filter,c)).forEach(c=>{
+    const b=document.createElement("button"); b.className="pick";
+    const ours=OURS.filter(o=>o[0]===c), theirs=THEIRS.find(t=>t[0]===c);
+    let meta="";
+    if(ours.length)meta+='<span class="meta">'+esc(ours.map(o=>o[1]).join(", "))+"</span>";
+    const sr=poolEntries.filter(e=>e&&e.champ===c);
+    if(sr.length)meta+='<span class="ctr">● '+esc(sr.map(e=>e.player).join(", "))+" now</span>";
+    if(theirs)meta+='<span class="thr">'+esc(theirs[1])+" T"+theirs[2]+"</span>";
+    b.innerHTML=esc(c)+meta;
+    b.disabled=tk.has(c)||ci===-1;
+    b.addEventListener("click",()=>assign(c));
+    list.appendChild(b);
+  });
+  if(!list.children.length)list.innerHTML='<span class="note">No match — check spelling or the filter.</span>';
+}
+
+function assign(c){
+  if(cur()===-1||taken().has(c))return;
+  state.steps[cur()]=c; saveDraft(); $("search").value=""; state.q=""; render();
+}
+
+function sugChip(c,label,extra){
+  const b=document.createElement("button"); b.className="pick";
+  b.innerHTML=esc(c)+(label?'<span class="meta">'+esc(label)+"</span>":"")+(extra||"");
+  b.disabled=taken().has(c);
+  b.addEventListener("click",()=>assign(c));
+  return b;
+}
+
+function renderSuggestions(){
+  const box=$("suggestions"), al=$("alerts"); box.innerHTML=""; al.innerHTML="";
+  const ci=cur(), tk=taken(), epAll=enemyPicks(), op=ourPicks();
+  if(ci===-1){
+    $("sugtitle").textContent="Draft complete";
+    box.innerHTML='<p class="note">Screenshot this board. For game 2: tell Claude their comp and what worked.</p>';
+  }else{
+    const st=ORDER[ci], mine=isOurs(ci);
+    if(mine&&st.t==="ban"){
+      $("sugtitle").textContent="Recommended bans (click to apply)";
+      BAN_ORDER.filter(c=>!tk.has(c)).slice(0,6).forEach(c=>{
+        const t=THEIRS.find(x=>x[0]===c);
+        box.appendChild(sugChip(c,t?t[1]:"", t?' <span class="thr">T'+t[2]+"</span>":""));
+      });
+    }else if(mine&&st.t==="pick"){
+      $("sugtitle").textContent="Pick suggestions (from our pools)";
+      const covered=new Set(); op.forEach(c=>{const o=OURS.find(x=>x[0]===c); if(o)covered.add(o[2][0]);});
+      const seen=new Set(), rows=[];
+      OURS.forEach(entry=>{
+        const c=entry[0],p=entry[1],roles=entry[2],tier=entry[3];
+        if(tk.has(c)||seen.has(c))return; seen.add(c);
+        let ctr=0, notes=[];
+        epAll.forEach(e=>{const cm=COUNTERS[e]; if(cm&&cm.a.includes(c)){ctr++; notes.push(e);}});
+        const roleOpen=roles.some(r=>!covered.has(r))?1:0;
+        const fresh=selfReported(c)?1:0;
+        rows.push({c,p,roles,tier,ctr,notes,roleOpen,fresh});
+      });
+      poolEntries.forEach(e=>{
+        if(!e||!e.champ||seen.has(e.champ)||tk.has(e.champ))return; seen.add(e.champ);
+        let ctr=0, notes=[];
+        epAll.forEach(x=>{const cm=COUNTERS[x]; if(cm&&cm.a.includes(e.champ)){ctr++; notes.push(x);}});
+        rows.push({c:e.champ,p:e.player,roles:[e.role||"?"],tier:2,ctr,notes,roleOpen:1,fresh:1});
+      });
+      rows.sort((a,b)=>(b.ctr-a.ctr)||(b.fresh-a.fresh)||(b.roleOpen-a.roleOpen)||(a.tier-b.tier));
+      rows.slice(0,10).forEach(r=>{
+        box.appendChild(sugChip(r.c, r.roles.join("/")+" · "+r.p,
+          (r.ctr?' <span class="ctr">✓ counters '+esc(r.notes.join(", "))+"</span>":"")+(r.fresh?' <span class="ctr">● in form</span>':"")));
+      });
+    }else if(st.t==="ban"){
+      $("sugtitle").textContent="Their ban — enter it";
+      box.innerHTML='<p class="note">Likely targets on us: <b>Nidalee, Swain, Thresh, Briar, Xerath, Sejuani</b>. Enter whatever they ban — the comp tracker updates.</p>';
+    }else{
+      $("sugtitle").textContent="Their pick — enter it";
+      box.innerHTML='<p class="note">Use search or the "Their pools" filter, then click their pick. Counter suggestions update for your next turn.</p>';
+    }
+    epAll.forEach(e=>{
+      const cm=COUNTERS[e];
+      if(cm){const d=document.createElement("div"); d.className="alert";
+        const avail=cm.a.filter(a=>op.includes(a)||!tk.has(a));
+        d.innerHTML="<b>They picked "+esc(e)+"</b>"+esc(cm.n)+" <i>Answers: "+esc(avail.length?avail.join(", "):"— all taken, play position")+"</i>";
+        al.appendChild(d);}
+    });
+    if(tk.has("Master Yi")&&tk.has("Jarvan IV")&&!op.includes("Master Yi")&&!op.includes("Jarvan IV")&&!epAll.includes("Master Yi")&&!epAll.includes("Jarvan IV")){
+      const d=document.createElement("div"); d.className="alert"; d.style.borderColor="var(--good)"; d.style.background="var(--surface2)";
+      d.innerHTML='<span class="okline">Yi AND Jarvan neutralized — Anthonyza is on his third-string champ.</span>'; al.appendChild(d);
+    }
+  }
+}
+
+function renderThreats(){
+  const t=$("threats"); t.innerHTML="";
+  const tk=taken(), ep=new Set(enemyPicks());
+  THEIRS.filter(x=>x[2]>=2).forEach(row=>{
+    const c=row[0],p=row[1];
+    const d=document.createElement("div"); d.className="threatrow";
+    let st,cls;
+    if(ep.has(c)){st="Picked ⚠"; cls="picked";}
+    else if(tk.has(c)){st="Gone"; cls="gone";}
+    else{st="Open"; cls="open";}
+    d.innerHTML="<span>"+esc(c)+' <span class="sub">'+esc(p)+"</span></span><span class=\"st "+cls+'">'+st+"</span>";
+    t.appendChild(d);
+  });
+}
+
+function renderComps(){
+  const q=$("compquick"); q.innerHTML="";
+  const tk=taken(), op=new Set(ourPicks());
+  COMPS.forEach(cp=>{
+    const parts=cp.picks.map(c=>{
+      if(op.has(c))return '<span class="have">'+esc(c)+"</span>";
+      if(tk.has(c))return '<span class="dead">'+esc(c)+"</span>";
+      return esc(c);
+    });
+    const alive=cp.picks.filter(c=>op.has(c)||!tk.has(c)).length;
+    const d=document.createElement("div"); d.className="cq";
+    d.innerHTML="<b>"+esc(cp.name)+"</b> ("+alive+"/5): "+parts.join(" · ");
+    q.appendChild(d);
+  });
+}
+
+/* ---------- controls ---------- */
+function syncSideButtons(){
+  $("sideB").classList.toggle("on",state.ourSide==="B");
+  $("sideR").classList.toggle("on",state.ourSide==="R");
+}
+$("sideB").addEventListener("click",()=>{state.ourSide="B"; syncSideButtons(); saveDraft(); render();});
+$("sideR").addEventListener("click",()=>{state.ourSide="R"; syncSideButtons(); saveDraft(); render();});
+$("reset").addEventListener("click",()=>{state.steps=Array(20).fill(null); saveDraft(); render();});
+$("undo").addEventListener("click",()=>{for(let i=19;i>=0;i--){if(state.steps[i]){state.steps[i]=null;break;}} saveDraft(); render();});
+$("search").addEventListener("input",e=>{state.q=e.target.value; renderChamps();});
+$("search").addEventListener("keydown",e=>{
+  if(e.key==="Enter"){const first=$("champlist").querySelector("button:not(:disabled)"); if(first)first.click();}
+});
+document.querySelectorAll("#filters .fchip").forEach(f=>f.addEventListener("click",()=>{
+  document.querySelectorAll("#filters .fchip").forEach(x=>x.classList.remove("on"));
+  f.classList.add("on"); state.filter=f.dataset.f; renderChamps();
+}));
+
+syncSideButtons(); render(); renderPool(); renderNotes(); renderVotes();
+initDB();
+</script>
+</html>
